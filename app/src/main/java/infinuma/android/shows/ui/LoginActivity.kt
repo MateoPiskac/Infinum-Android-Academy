@@ -14,10 +14,12 @@ import infinuma.android.shows.R
     onRestart() – called when the activity has been stopped and is starting again.
     onDestroy() – called when activity is destroyed.
 
-    When moving the app into the background the following methods are called:
+    When the app is created the following methods are called:
     onCreate()
     onStart()
     onResume()
+
+    When moving the app into the background the following methods are called:
     onPause()
     onStop()
     When moving the app back to the foreground the following methods are called:
@@ -26,9 +28,6 @@ import infinuma.android.shows.R
     onResume()
 
     When locking the device the following methods are called:
-    onCreate()
-    onStart()
-    onResume()
     onPause()
     onStop()
     When unlocking the device the following methods are called:
@@ -37,9 +36,6 @@ import infinuma.android.shows.R
     onResume()
 
     When killing the app the following methods are called:
-    onCreate()
-    onStart()
-    onResume()
     onPause()
     onStop()
     onDestroy()
