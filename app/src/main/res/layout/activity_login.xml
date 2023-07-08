@@ -92,6 +92,7 @@
         >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailInputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/input_text"
@@ -113,10 +114,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emailInput"
+        app:endIconMode="password_toggle"
 
         >
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordInputField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/input_text"
@@ -131,7 +134,7 @@
         android:layout_marginBottom="32dp"
         android:layout_marginHorizontal="24dp"
         android:background="@drawable/button_shape"
-        android:alpha="0.5"
+        android:enabled="false"
         android:contentDescription="@string/login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -144,10 +147,10 @@
         android:layout_height="wrap_content"
         android:text="@string/login"
         android:alpha="0.8"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/loginButton"
         app:layout_constraintEnd_toEndOf="@id/loginButton"
         app:layout_constraintStart_toStartOf="@id/loginButton"
-        app:layout_constraintTop_toTopOf="@id/loginButton"
-        />
+        app:layout_constraintTop_toTopOf="@id/loginButton"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

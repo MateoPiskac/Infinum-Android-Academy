@@ -1,12 +1,16 @@
 package infinuma.android.shows.ui
 
-import android.content.Intent
+import  android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import androidx.core.content.ContextCompat
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.ActivityLoginBinding
-import java.util.zip.Inflater
 
 /*
     Activity Lifecycle
@@ -47,17 +51,50 @@ import java.util.zip.Inflater
  */
 class LoginActivity : AppCompatActivity() {
 
+    val USERNAME = "username"
     private lateinit var binding: ActivityLoginBinding
+    private val watcher = object : TextWatcher {
+        override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+
+            if (binding.emailInputField.text?.matches(Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")) == true && (binding.passwordInputField.text?.length
+                    ?: 0) >= 6
+            ) {
+                binding.loginButtonText.alpha = 1F
+                binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.purple))
+                binding.loginButtonText.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.purple))
+                binding.loginButton.isEnabled = true
+            } else {
+                binding.loginButton.isEnabled = false
+                binding.loginButtonText.alpha = 0.8F
+                binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.white))
+                binding.loginButtonText.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.white))
+            }
+        }
+
+        override fun afterTextChanged(text: Editable?) {
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         Log.d("LoginActivity", "onCreate")
         setContentView(binding.root)
 
-
-
-
+        binding.emailInputField.addTextChangedListener(watcher)
+        binding.passwordInputField.addTextChangedListener(watcher)
+        binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
+        binding.loginButton.setOnClickListener {
+            val intent = Intent(this, WelcomeActivity::class.java)
+            intent.putExtra(USERNAME, binding.emailInputField.text?.substring(0, binding.emailInputField.text!!.indexOf("@")))
+            startActivity(intent)
+        }
     }
+
     override fun onStart() {
         super.onStart()
         Log.d("LoginActivity", "onStart is called")
