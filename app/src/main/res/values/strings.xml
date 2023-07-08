@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Shows</string>
     <string name="login_text">In order to continue please log in.</string>
+    <string name="login">Login</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="visual_design_element_description">Visual design element</string>
 </resources>
