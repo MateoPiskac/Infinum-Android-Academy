@@ -11,6 +11,6 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.welcomeText.text = "Welcome, ${intent.getStringExtra("username")}"
+        binding.welcomeText.text = "Welcome, " + "${intent.getStringExtra("username")}"
     }
 }
