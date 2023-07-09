@@ -62,15 +62,12 @@ class LoginActivity : AppCompatActivity() {
             if (binding.emailInputField.text?.matches(Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")) == true && (binding.passwordInputField.text?.length
                     ?: 0) >= 6
             ) {
-                binding.loginButtonText.alpha = 1F
-                binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.purple))
-                binding.loginButtonText.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.purple))
                 binding.loginButton.isEnabled = true
+                binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.purple))
+
             } else {
                 binding.loginButton.isEnabled = false
-                binding.loginButtonText.alpha = 0.8F
                 binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.white))
-                binding.loginButtonText.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.white))
             }
         }
 
