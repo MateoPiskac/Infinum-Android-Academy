@@ -55,17 +55,21 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val watcher = object : TextWatcher {
         override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+            binding.emailInputField.error = null
         }
 
         override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
-
+            binding.emailInputField.error = null
             if (binding.emailInputField.text?.matches(Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")) == true && (binding.passwordInputField.text?.length
                     ?: 0) >= 6
             ) {
+               binding.emailInputField.error = null
                 binding.loginButton.isEnabled = true
                 binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.purple))
 
             } else {
+                if(binding.emailInputField.text?.matches(Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")) == false)
+                    binding.emailInputField.error = "Invalid Email"
                 binding.loginButton.isEnabled = false
                 binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.white))
             }
