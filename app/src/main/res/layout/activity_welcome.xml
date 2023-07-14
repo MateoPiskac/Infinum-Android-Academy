@@ -29,7 +29,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/welcomeIcon"
-        android:textColor="@color/md_blue_grey_500"
+        android:textColor="@color/black"
 
         />
 
