@@ -52,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
         binding.passwordInputField.addTextChangedListener(watcher)
         binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
         binding.loginButton.setOnClickListener {
-            val intent = Intent(this, WelcomeActivity::class.java)
+            val intent = Intent(this, ShowsActivity::class.java)
             intent.putExtra(USERNAME, binding.emailInputField.text?.substring(0, binding.emailInputField.text!!.indexOf("@")))
             startActivity(intent)
         }
