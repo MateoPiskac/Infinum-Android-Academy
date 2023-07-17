@@ -7,7 +7,6 @@
     <string name="visual_design_element_description">Visual design element</string>
     <string name="welcome_message">Welcome %s</string>
     <string name="title_activity_shows">ShowsActivity</string>
-
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris volutpat, dolor id interdum ullamcorper,
         risus dolor egestas lectus, sit amet mattis purus dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti
         sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend diam, vel rutrum tellus
@@ -35,4 +34,12 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
     <string name="show_drawable">Show drawable</string>
+    <string name="reviews">Reviews</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="write_a_review">Write a review</string>
+    <string name="empty_show_list_text">Your shows are not showing. Get it?</string>
+    <string name="empty_list_icon_description">Empty list icon</string>
+    <string name="load_shows_button_text">Load shows</string>
+    <string name="placeholder_review">It was good. I laughed a lot, it matches my sense of humor perfectly. Loved it!</string>
+    <string name="placeholder_review_author">John Doe</string>
 </resources>

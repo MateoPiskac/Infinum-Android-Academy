@@ -1,10 +1,14 @@
 package infinuma.android.shows.ui
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
-import infinuma.android.shows.R
-import infinuma.android.shows.data.Show
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import infinuma.android.shows.data.SHOW
+import infinuma.android.shows.data.showsList
 import infinuma.android.shows.databinding.ActivityShowsBinding
+
+
 
 class ShowsActivity : AppCompatActivity() {
 
@@ -13,20 +17,23 @@ class ShowsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityShowsBinding.inflate(layoutInflater)
-
-        val showsList = listOf<Show>(
-            Show("The Office", getString(R.string.lorem_ipsum) , R.drawable.ic_office),
-            Show("Stranger Things", getString(R.string.lorem_ipsum), R.drawable.ic_stranger_things),
-            Show("Krv nije voda", getString(R.string.lorem_ipsum), R.drawable.krv_nije_voda_1)
-        )
+        binding = ActivityShowsBinding.inflate(layoutInflater)
         adapter = ShowsListAdapter(showsList) {
-
-
+            val intent = Intent(this, ShowDetailsActivity::class.java)
+            intent.putExtra(SHOW, it)
+            startActivity(intent)
         }
         binding.recyclerView.adapter = adapter
-
-
+        binding.loadShowsButton.setOnClickListener {
+            binding.emptyListIcon.visibility = View.GONE
+            binding.emptyListText.visibility = View.GONE
+            binding.loadShowsButton.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
+        }
         setContentView(binding.root)
+    }
+
+    public fun getShowDescription(showName: String): String {
+        return showsList.find { it.Title == showName }?.Description ?: "No description available."
     }
 }

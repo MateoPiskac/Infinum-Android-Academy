@@ -3,30 +3,22 @@ package infinuma.android.shows.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import infinuma.android.shows.data.Show
 import infinuma.android.shows.databinding.ShowsListItemBinding
 
-class ShowsListAdapter(private val shows : List<Show>, private val onItemClickCallback : (Show) -> Unit) :
-    ListAdapter<Show, ShowsListAdapter.ShowsViewHolder>(DiffUtilCallback()) {
+class ShowsListAdapter(private val shows: List<Show>, private val onItemClickCallback: (Show) -> Unit) :
+    RecyclerView.Adapter<ShowsListAdapter.ShowsViewHolder>() {
 
-    private class DiffUtilCallback : DiffUtil.ItemCallback<Show>(){
-        override fun areItemsTheSame(oldItem: Show, newItem: Show): Boolean =
-            oldItem.toString()===newItem.toString()
-
-        override fun areContentsTheSame(oldItem: Show, newItem: Show): Boolean =
-            oldItem==newItem
-
-    }
-
-    class ShowsViewHolder(private val binding : ShowsListItemBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class ShowsViewHolder(private val binding: ShowsListItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(show: Show) {
-            binding.showTitle.text= show.Title
+            binding.cardView.setOnClickListener {
+                onItemClickCallback.invoke(show)
+            }
+            binding.showTitle.text = show.Title
             binding.showImage.setImageResource(show.Image)
             binding.showDescription.text = show.Description
         }
-
     }
 
 
@@ -42,7 +34,4 @@ class ShowsListAdapter(private val shows : List<Show>, private val onItemClickCa
     override fun getItemCount(): Int {
         return shows.size
     }
-
-
 }
-

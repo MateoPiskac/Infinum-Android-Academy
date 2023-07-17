@@ -9,9 +9,9 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import androidx.core.content.ContextCompat
 import infinuma.android.shows.R
+import infinuma.android.shows.data.USERNAME
 import infinuma.android.shows.databinding.ActivityLoginBinding
 
-const val USERNAME = "username"
 class LoginActivity : AppCompatActivity() {
     private val emailRegex : Regex = Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
     private lateinit var binding: ActivityLoginBinding
