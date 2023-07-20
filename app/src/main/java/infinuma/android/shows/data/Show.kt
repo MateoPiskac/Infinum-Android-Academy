@@ -4,8 +4,7 @@ import androidx.annotation.DrawableRes
 import java.io.Serializable
 
 data class Show(
-    val Title : String,
-    val Description : String,
-    @DrawableRes val Image : Int,
-    //var reviews : Map <String, Pair <String, String>> = emptyMap()
-    ):Serializable
+    val title: String,
+    val description: String,
+    @DrawableRes val image: Int,
+) : Serializable

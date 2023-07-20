@@ -14,10 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
+        android:focusable="true"
         app:cardCornerRadius="8dp"
         app:cardUseCompatPadding="true"
-        app:rippleColor="@color/ripple_color"
-        android:focusable="true">
+        app:rippleColor="@color/ripple_color">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -29,11 +29,11 @@
                 android:id="@+id/showImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/show_drawable"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_office"
-                android:contentDescription="@string/show_drawable"/>
+                tools:src="@drawable/ic_office"/>
 
             <TextView
                 android:id="@+id/showTitle"
@@ -42,11 +42,11 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start"
-                tools:text="The Office"
                 android:textAppearance="@style/header"
-                tools:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/showImage"/>
+                app:layout_constraintTop_toBottomOf="@id/showImage"
+                tools:text="The Office"
+                tools:textColor="@color/black"/>
 
             <TextView
                 android:id="@+id/showDescription"

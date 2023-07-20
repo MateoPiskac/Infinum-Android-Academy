@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_centerHorizontal="true"
     android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
     android:orientation="vertical"
     android:background="@color/white">
 
@@ -48,25 +48,5 @@
         android:textAppearance="@style/reviews"
         />
 
-    <TextView
-        android:id="@+id/reviewRatingText"
-        android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginHorizontal="24dp"
-        android:textAppearance="@style/reviewRating"
-        tools:text="3 REVIEWS, 3.67 AVERAGE"
-        />
 
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:numStars="5"
-        android:progressTint="@color/purple"
-        android:rating="5"
-        android:clickable="false"
-        android:isIndicator="true"
-        android:stepSize="0.5"
-        />
 </LinearLayout>

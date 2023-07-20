@@ -8,8 +8,6 @@ import infinuma.android.shows.data.SHOW
 import infinuma.android.shows.data.showsList
 import infinuma.android.shows.databinding.ActivityShowsBinding
 
-
-
 class ShowsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityShowsBinding
@@ -33,7 +31,4 @@ class ShowsActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    public fun getShowDescription(showName: String): String {
-        return showsList.find { it.Title == showName }?.Description ?: "No description available."
-    }
 }

@@ -13,10 +13,9 @@ import java.io.Serializable
 
 class ShowDetailsActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityShowDetailsBinding
-    lateinit var show: Show
-
-    private var reviewListItemList: MutableList<ReviewListItem> = mutableListOf()
+    private lateinit var binding: ActivityShowDetailsBinding
+    private lateinit var show: Show
+    private var reviewList: MutableList<ReviewListItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +28,11 @@ class ShowDetailsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         binding.toolbar.setNavigationOnClickListener { this.finish() }
-        binding.toolbarLayout.title = show.Title
+        binding.toolbarLayout.title = show.title
 
-        reviewListItemList.add(ReviewListItem.ShowDetails(show.Image, show.Description))
-        adapter.submitList(reviewListItemList.toList())
+        reviewList.add(ReviewListItem.ShowDetails(show.image, show.description))
+        reviewList.add(ReviewListItem.NoReviews)
+        adapter.submitList(reviewList.toList())
 
         binding.reviewButton.setOnClickListener {
             val builder = AlertDialog.Builder(this)
@@ -40,14 +40,20 @@ class ShowDetailsActivity : AppCompatActivity() {
                 .setTitle("Shows app")
                 .setCancelable(false)
                 .setPositiveButton("Add") { dialog, which ->
-                    reviewListItemList.add(
-                        ReviewListItem.Review(
-                            getString(R.string.placeholder_review_author),
-                            getString(R.string.placeholder_review),
-                            5
+                    reviewList.removeIf { it == ReviewListItem.NoReviews }
+                    print(reviewList)
+                    if (reviewList.size == 1) {
+                        reviewList.add(ReviewListItem.Rating(5f, 1))
+                        addReview(getString(R.string.placeholder_review_author), getString(R.string.placeholder_review), 5)
+                        print("BAKI LISTA 1 ")
+                        println(reviewList[1].toString().toFloat() * (reviewList.size - 2))
+                    } else {
+                        addReview(getString(R.string.placeholder_review_author), getString(R.string.placeholder_review), 3)
+                        reviewList[1] = ReviewListItem.Rating(
+                            ((reviewList[1].toString().toFloat() * (reviewList.size - 3)) + 3f) / (reviewList.size - 2), reviewList.size - 2
                         )
-                    )
-                    adapter.submitList(reviewListItemList.toList())
+                    }
+                    adapter.submitList(reviewList.toList())
                     dialog.dismiss()
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
@@ -65,5 +71,13 @@ class ShowDetailsActivity : AppCompatActivity() {
             intent.getSerializableExtra(key) as T
     }
 
-
+    private fun addReview(author: String, review: String, rating: Int) {
+        reviewList.add(
+            ReviewListItem.Review(
+                author,
+                review,
+                rating
+            )
+        )
+    }
 }

@@ -83,9 +83,9 @@
         android:layout_marginTop="24dp"
         android:layout_marginHorizontal="24dp"
         android:hint="@string/email_hint"
-        app:errorEnabled="true"
         app:boxStrokeColor="@color/white"
         app:counterTextAppearance="@style/input_text"
+        app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/passwordInput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,11 +111,11 @@
         android:hint="@string/password_hint"
         app:boxStrokeColor="@color/white"
         app:counterTextAppearance="@style/input_text"
+        app:endIconMode="password_toggle"
         app:layout_constraintBottom_toTopOf="@id/loginButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emailInput"
-        app:endIconMode="password_toggle"
 
         >
 
@@ -143,7 +143,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="DuplicateSpeakableTextCheck,VisualLintButtonSize"/>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
