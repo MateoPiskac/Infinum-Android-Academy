@@ -5,16 +5,23 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import infinuma.android.shows.R
 import infinuma.android.shows.data.USERNAME
-import infinuma.android.shows.databinding.ActivityLoginBinding
+import infinuma.android.shows.databinding.FragmentLoginBinding
 
-class LoginActivity : AppCompatActivity() {
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
+class LoginFragment : Fragment() {
     private val emailRegex: Regex = Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
-    private lateinit var binding: ActivityLoginBinding
+    private lateinit var binding: FragmentLoginBinding
     private val watcher = object : TextWatcher {
         override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
             binding.emailInputField.error = null
@@ -27,13 +34,13 @@ class LoginActivity : AppCompatActivity() {
             ) {
                 binding.emailInputField.error = null
                 binding.loginButton.isEnabled = true
-                binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.purple))
+                binding.loginButton.setTextColor(ContextCompat.getColor(context!!, R.color.purple))
 
             } else {
                 if (binding.emailInputField.text?.matches(emailRegex) == false)
                     binding.emailInputField.error = "Invalid Email"
                 binding.loginButton.isEnabled = false
-                binding.loginButton.setTextColor(ContextCompat.getColor(this@LoginActivity, R.color.white))
+                binding.loginButton.setTextColor(ContextCompat.getColor(context!!, R.color.white))
             }
         }
 
@@ -44,18 +51,19 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        Log.d("LoginActivity", "onCreate")
-        setContentView(binding.root)
 
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentLoginBinding.inflate(layoutInflater)
         binding.emailInputField.addTextChangedListener(watcher)
         binding.passwordInputField.addTextChangedListener(watcher)
         binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
         binding.loginButton.setOnClickListener {
-            val intent = Intent(this, ShowsActivity::class.java)
-            intent.putExtra(USERNAME, binding.emailInputField.text?.substring(0, binding.emailInputField.text!!.indexOf("@")))
-            startActivity(intent)
+            (activity as MainActivity).login()
         }
+        return binding.root
     }
+
 
 }

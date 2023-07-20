@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/bottomSheet"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bootom_sheet_dialog_shape">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/write_a_review"
+        android:textAppearance="@style/header"
+        app:drawableEndCompat="@drawable/baseline_clear_24"/>
+
+    <RatingBar
+        android:id="@+id/reviewRatingInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:numStars="5"
+        android:stepSize="1"
+        android:progressTint="@color/purple"
+        android:rating="5"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/purple"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/reviewInputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="24dp"
+            android:hint="@string/comment"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textAppearance="@style/input_text"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/submitReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/submit"
+        android:textColor="@color/white"
+        android:background="@color/purple"
+        android:backgroundTint="@color/purple"
+        app:cornerRadius="24dp"
+        />
+</LinearLayout>
