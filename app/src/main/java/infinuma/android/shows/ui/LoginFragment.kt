@@ -1,6 +1,5 @@
 package infinuma.android.shows.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,9 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
-import infinuma.android.shows.data.USERNAME
 import infinuma.android.shows.databinding.FragmentLoginBinding
-
 
 class LoginFragment : Fragment() {
     private val emailRegex: Regex = Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
@@ -46,11 +43,6 @@ class LoginFragment : Fragment() {
 
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLoginBinding.inflate(layoutInflater)
         binding.emailInputField.addTextChangedListener(watcher)
@@ -61,6 +53,5 @@ class LoginFragment : Fragment() {
         }
         return binding.root
     }
-
 
 }

@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +11,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.data.Show
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
-import java.io.Serializable
 
 class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
 
@@ -55,7 +54,7 @@ class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
         (activity as AppCompatActivity).supportActionBar?.setHomeAsUpIndicator(R.drawable.arrow_back)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { (activity as MainActivity).back() }
+        binding.toolbar.setNavigationOnClickListener { findNavController().navigate(R.id.action_showDetailsFragment_to_showsFragment) }
         binding.toolbarLayout.title = show.title
     }
 
@@ -65,6 +64,7 @@ class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
             adapter.submitList(reviewList.toList())
         }
     }
+
     private fun addReview(author: String, review: String, rating: Int) {
         reviewList.add(
             ReviewListItem.Review(
