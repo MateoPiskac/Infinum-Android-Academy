@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.data.SHOW
 import infinuma.android.shows.data.showsList
@@ -28,10 +30,12 @@ class ShowsFragment : Fragment(R.layout.fragment_shows) {
         binding = FragmentShowsBinding.inflate(layoutInflater)
         binding.logoutButton.isVisible = true
         binding.logoutButton.setOnClickListener{
-            (activity as MainActivity).logout()
+            findNavController().navigate(R.id.action_showsFragment_to_loginFragment)
         }
         adapter = ShowsListAdapter(showsList) {
-            (activity as MainActivity).openShowDetails(it)
+            val bundle = bundleOf(SHOW to it)
+            println("DEBUG " + bundle)
+            findNavController().navigate(R.id.action_showsFragment_to_showDetailsFragment,bundle)
         }
         binding.recyclerView.adapter = adapter
         binding.loadShowsButton.setOnClickListener {

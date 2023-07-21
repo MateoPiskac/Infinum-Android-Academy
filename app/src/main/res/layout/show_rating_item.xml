@@ -28,6 +28,7 @@
         android:layout_marginHorizontal="24dp"
         android:numStars="5"
         android:progressTint="@color/purple"
+        android:progressBackgroundTint="@color/purple_200"
         android:rating="5"
         android:clickable="false"
         android:isIndicator="true"

@@ -10,14 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.data.USERNAME
 import infinuma.android.shows.databinding.FragmentLoginBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class LoginFragment : Fragment() {
     private val emailRegex: Regex = Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
@@ -60,7 +57,7 @@ class LoginFragment : Fragment() {
         binding.passwordInputField.addTextChangedListener(watcher)
         binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
         binding.loginButton.setOnClickListener {
-            (activity as MainActivity).login()
+            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
         }
         return binding.root
     }

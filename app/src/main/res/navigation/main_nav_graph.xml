@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    app:startDestination="@id/loginFragment">
+
+    <fragment android:id="@+id/loginFragment"
+        android:name="infinuma.android.shows.ui.LoginFragment"
+        android:label="LoginFragment">
+        <action android:id="@+id/action_loginFragment_to_showsFragment"
+            app:destination="@id/navigation" app:enterAnim="@anim/nav_default_enter_anim" app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim" app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+    </fragment>
+    <navigation android:id="@+id/navigation" app:startDestination="@id/showsFragment">
+        <fragment android:id="@+id/showsFragment"
+            android:name="infinuma.android.shows.ui.ShowsFragment"
+            android:label="ShowsFragment">
+            <action android:id="@+id/action_showsFragment_to_showDetailsFragment"
+                app:destination="@id/showDetailsFragment" app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim" app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            <action android:id="@+id/action_showsFragment_to_loginFragment" app:destination="@id/loginFragment"
+                app:enterAnim="@anim/nav_default_enter_anim" app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"/>
+        </fragment>
+        <fragment android:id="@+id/showDetailsFragment"
+            android:name="infinuma.android.shows.ui.ShowDetailsFragment"
+            android:label="ShowDetailsFragment">
+            <action android:id="@+id/action_showDetailsFragment_to_showsFragment" app:destination="@id/showsFragment"
+                app:enterAnim="@anim/nav_default_enter_anim" app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim" app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            <argument android:name="show" app:argType="infinuma.android.shows.data.Show"/>
+        </fragment>
+    </navigation>
+</navigation>

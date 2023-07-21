@@ -12,13 +12,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     lateinit var currentShow: Show
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(savedInstanceState==null){
-            supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                add<LoginFragment>(R.id.fragmentContainerView)
-                addToBackStack("Fragment Login")
-            }
-        }
+//        if(savedInstanceState==null){
+//            supportFragmentManager.commit {
+//                setReorderingAllowed(true)
+//                add<LoginFragment>(R.id.fragmentContainerView)
+//                addToBackStack("Fragment Login")
+//            }
+//        }
     }
 
     fun openShowDetails(show: Show){
