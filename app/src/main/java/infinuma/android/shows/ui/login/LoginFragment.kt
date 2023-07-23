@@ -1,4 +1,4 @@
-package infinuma.android.shows.ui
+package infinuma.android.shows.ui.login
 
 import android.os.Bundle
 import android.text.Editable
@@ -15,7 +15,8 @@ import infinuma.android.shows.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
     private val emailRegex: Regex = Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
-    private lateinit var binding: FragmentLoginBinding
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
     private val watcher = object : TextWatcher {
         override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
             binding.emailInputField.error = null
@@ -44,7 +45,7 @@ class LoginFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentLoginBinding.inflate(layoutInflater)
+        _binding = FragmentLoginBinding.inflate(layoutInflater)
         binding.emailInputField.addTextChangedListener(watcher)
         binding.passwordInputField.addTextChangedListener(watcher)
         binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
@@ -53,5 +54,8 @@ class LoginFragment : Fragment() {
         }
         return binding.root
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

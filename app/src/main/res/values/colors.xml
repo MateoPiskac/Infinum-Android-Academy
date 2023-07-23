@@ -9,5 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="purple">#3D1D72</color>
     <color name="ripple_color">#999999</color>
+    <color name="ratingBarSecondary">#F6F79C</color>
 
 </resources>

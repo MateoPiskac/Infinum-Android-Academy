@@ -1,4 +1,4 @@
-package infinuma.android.shows.ui
+package infinuma.android.shows.ui.showDetails
 
 import android.content.Intent
 import android.graphics.Color
@@ -11,15 +11,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.FragmentWriteReviewDialogBinding
+import kotlin.math.roundToInt
 
-class WriteReviewDialogFragment : BottomSheetDialogFragment(R.layout.fragment_write_review_dialog) {
+class WriteReviewDialogFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentWriteReviewDialogBinding
+    private var _binding: FragmentWriteReviewDialogBinding? = null
+    private val binding get() = _binding!!
     private lateinit var review: ReviewListItem.Review
     private var reviews: MutableList<ReviewListItem> = mutableListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentWriteReviewDialogBinding.inflate(layoutInflater)
+        _binding = FragmentWriteReviewDialogBinding.inflate(layoutInflater)
         binding.reviewInputField.setHintTextColor(Color.BLACK)
         binding.closeSheet.setOnClickListener {
             this.dismiss()
@@ -49,7 +51,7 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment(R.layout.fragment_wr
         } else {
             addReview(review.reviewerName, review.reviewText, review.rating)
             reviews[1] = ReviewListItem.Rating(
-                ((reviews[1].toString().toFloat() * (reviews.size - 3)) + review.rating.toFloat()) / (reviews.size - 2), reviews.size - 2
+                ((((reviews[1].toString().toFloat() * (reviews.size - 3)) + review.rating.toFloat()) / (reviews.size - 2))*100).roundToInt()/100f, reviews.size - 2
             )
         }
     }
@@ -68,5 +70,8 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment(R.layout.fragment_wr
         )
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

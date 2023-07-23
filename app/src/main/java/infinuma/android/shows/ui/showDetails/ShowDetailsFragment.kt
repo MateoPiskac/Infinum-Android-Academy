@@ -1,4 +1,4 @@
-package infinuma.android.shows.ui
+package infinuma.android.shows.ui.showDetails
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -16,20 +16,17 @@ import infinuma.android.shows.R
 import infinuma.android.shows.data.Show
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 
-class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
+class ShowDetailsFragment : Fragment() {
 
-    private lateinit var binding: FragmentShowDetailsBinding
+    private var _binding: FragmentShowDetailsBinding? = null
+    private val binding get() = _binding!!
     private lateinit var show: Show
     lateinit var adapter: ReviewListAdapter
     private var reviewList: MutableList<ReviewListItem> = mutableListOf()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentShowDetailsBinding.inflate(layoutInflater)
+        _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
         adapter = ReviewListAdapter()
         binding.reviewRecycler.adapter = adapter
         show = (arguments?.get("show") as? Show)!!
@@ -43,7 +40,6 @@ class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
             reviewList.removeIf { it == ReviewListItem.NoReviews }
             writeReview.getReviews(reviewList)
             writeReview.show(childFragmentManager, "WriteReview")
-
             adapter.submitList(reviewList.toList())
         }
         return binding.root
@@ -65,15 +61,6 @@ class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
         }
     }
 
-    private fun addReview(author: String, review: String, rating: Int) {
-        reviewList.add(
-            ReviewListItem.Review(
-                author,
-                review,
-                rating
-            )
-        )
-    }
 
     override fun onResume() {
         super.onResume()
@@ -86,6 +73,11 @@ class ShowDetailsFragment : Fragment(R.layout.fragment_show_details) {
     override fun onPause() {
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(someBroadcastReceiver)
         super.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
 }

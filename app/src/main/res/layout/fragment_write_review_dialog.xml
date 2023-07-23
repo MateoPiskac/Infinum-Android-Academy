@@ -49,7 +49,7 @@
         android:numStars="5"
         android:stepSize="1"
         android:progressTint="@color/purple"
-        android:progressBackgroundTint="@color/purple_200"
+        android:progressBackgroundTint="@color/ratingBarSecondary"
         android:rating="0"
         />
 

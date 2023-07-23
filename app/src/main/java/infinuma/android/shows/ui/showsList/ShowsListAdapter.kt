@@ -1,4 +1,4 @@
-package infinuma.android.shows.ui
+package infinuma.android.shows.ui.showsList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

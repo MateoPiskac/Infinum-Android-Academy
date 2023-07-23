@@ -1,4 +1,4 @@
-package infinuma.android.shows.ui
+package infinuma.android.shows.ui.showDetails
 
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +21,7 @@ sealed class ReviewListItem {
             return averageRating.toString()
         }
     }
-    object NoReviews:ReviewListItem()
+    object NoReviews: ReviewListItem()
 }
 
 class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDetailReviewViewHolder>(DiffCallback()) {
@@ -59,14 +59,14 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
                 binding.showDescription.text = details.description
             }
         }
-        class RatingViewHolder(private var binding: ShowRatingItemBinding) :ShowDetailReviewViewHolder(binding.root){
+        class RatingViewHolder(private var binding: ShowRatingItemBinding) : ShowDetailReviewViewHolder(binding.root){
 
             fun bind(rating: ReviewListItem.Rating){
                 """${rating.numberOfReviews} REVIEWS ${rating.averageRating} AVERAGE""".also { binding.reviewRatingText.text = it }
                 binding.ratingBar.rating = rating.averageRating
             }
         }
-        class NoReviewViewHolder(private var binding: ShowNoreviewsItemBinding) :ShowDetailReviewViewHolder(binding.root){
+        class NoReviewViewHolder(private var binding: ShowNoreviewsItemBinding) : ShowDetailReviewViewHolder(binding.root){
             fun bind(){
                 binding.noReviewsText.isVisible = true
             }
