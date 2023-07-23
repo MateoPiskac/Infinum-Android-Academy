@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_dialog_shape"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        >
+
+        <TextView
+            android:id="@+id/writeReviewHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="184dp"
+            android:text="@string/write_a_review"
+            android:textAppearance="@style/header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:id="@+id/closeSheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/baseline_clear_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RatingBar
+        android:id="@+id/reviewRatingInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:numStars="5"
+        android:stepSize="1"
+        android:progressTint="@color/purple"
+        android:progressBackgroundTint="@color/ratingBarSecondary"
+        android:rating="0"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:boxStrokeColor="@color/purple"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/reviewInputField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="24dp"
+            android:theme="@style/CustomTextInputLayoutReview"
+            android:backgroundTintMode="src_atop"
+            android:backgroundTint="@color/white"
+            android:hint="@string/comment"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textAppearance="@style/input_text"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/submitReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/submit"
+        android:enabled="false"
+        android:textColor="@color/white"
+        android:background="@drawable/button_shape"
+        android:backgroundTint="@color/purple"
+        app:cornerRadius="24dp"
+        />
+</LinearLayout>
