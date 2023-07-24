@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bottom_sheet_dialog_shape"
+
+    >
+
+    <ImageView
+        android:id="@+id/userProfilePicture"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/placeholder_profile_picture"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/userEmail"
+        android:layout_marginTop="40dp"
+        />
+
+    <TextView
+        android:id="@+id/userEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/userProfilePicture"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/changePhotoButton"
+        android:layout_marginTop="32dp"
+        android:textAppearance="@style/header"
+        tools:text="ruler_of_assignments@hotmail.com"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/changePhotoButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/userEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/logoutButton"
+        android:layout_marginTop="64dp"
+        android:layout_marginHorizontal="24dp"
+        android:backgroundTint="@color/white"
+        app:strokeColor="@color/purple"
+        app:strokeWidth="2dp"
+        app:cornerRadius="24dp"
+        android:text="@string/change_profile_photo"
+        android:textAppearance="@style/reviewAuthor"
+        android:textColor="@color/purple"
+        android:textStyle="bold"
+        />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/logoutButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/changePhotoButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/purple"
+        app:cornerRadius="24dp"
+        android:text="@string/logout"
+        android:textAppearance="@style/login_text"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

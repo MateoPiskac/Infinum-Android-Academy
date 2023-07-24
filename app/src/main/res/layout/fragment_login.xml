@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple"
-    tools:context=".ui.LoginActivity">
+    >
 
     <ImageView
         android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
         android:id="@+id/loginText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="64dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="278dp"
         android:text="@string/login"
@@ -127,6 +127,16 @@
             tools:ignore="VisualLintTextFieldSize"/>
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <CheckBox
+        android:id="@+id/loginCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/passwordInput"
+        app:layout_constraintStart_toStartOf="@id/passwordInput"
+        android:layout_marginTop="8dp"
+        android:buttonTint="@color/white"
+        android:text="@string/remember_me"/>
 
     <Button
         android:id="@+id/loginButton"
