@@ -36,6 +36,7 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
                 binding.reviewRatingInput.rating.toInt()
             )
             updateRatingBar()
+
             val intent = Intent("newShowList")
             intent.putExtra("reviewList", bundleOf("reviews" to reviews))
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent);
@@ -69,7 +70,6 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
             )
         )
     }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

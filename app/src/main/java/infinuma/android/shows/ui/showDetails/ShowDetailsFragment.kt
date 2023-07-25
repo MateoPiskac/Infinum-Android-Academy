@@ -33,7 +33,7 @@ class ShowDetailsFragment : Fragment() {
         adapter.submitList(viewModel.getInitialReviewList())
         initToolbar()
         viewModel.showLiveData.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+            adapter.submitList(it.toList())
         }
         binding.reviewButton.setOnClickListener {
             viewModel.removeNoReviewsText()
@@ -56,7 +56,6 @@ class ShowDetailsFragment : Fragment() {
     private val someBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             viewModel.addReviews(intent.getBundleExtra("reviewList")?.get("reviews") as MutableList<ReviewListItem>)
-            adapter.submitList(viewModel.showLiveData.value)
         }
     }
 
