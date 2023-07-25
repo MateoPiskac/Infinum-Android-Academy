@@ -33,6 +33,7 @@ import java.io.IOException
 class UserProfileDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentUserProfileListDialogBinding? = null
+    private lateinit var alertDialogBinding: ProfilePhotoAlertDialogBinding
     private val binding get() = _binding!!
     private val REQUEST_IMAGE_CAPTURE = 1
     private val REQUEST_PICK_IMAGE = 2
@@ -42,7 +43,10 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUserProfileListDialogBinding.inflate(inflater, container, false)
-
+        alertDialogBinding = ProfilePhotoAlertDialogBinding.inflate(layoutInflater)
+        alertDialogBinding.cameraButton.setOnClickListener {
+            dispatchTakePictureIntent()
+        }
         binding.userEmail.text = sharedPreferences.getString(USERNAME, getString(R.string.placeholder_review_author))
         val tempPath = sharedPreferences.getString(PROFILEPHOTOURI, "")
         if (tempPath == "") binding.userProfilePicture.setImageResource(R.drawable.placeholder_profile_picture)
@@ -64,16 +68,18 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
         }
 
         binding.changePhotoButton.setOnClickListener {
-            val alertDialog = AlertDialog.Builder(requireContext()).setMessage("Take a new picture, or choose from gallery?").setTitle("Choose")
-                .setCancelable(true).setPositiveButton("Open camera") { dialog, _ ->
-                    dialog.cancel()
-                    dispatchTakePictureIntent()
-
-                }.setNegativeButton("Open gallery") { dialog, _ ->
-                    dialog.cancel()
-                    requestMediaAccessAndPickImage()
-                }.show()
-
+            val alertBuilder = AlertDialog.Builder(requireContext())
+                .setView(alertDialogBinding.root)
+            val alertDialog = alertBuilder.create()
+            alertDialogBinding.cameraButton.setOnClickListener {
+                alertDialog.dismiss()
+                dispatchTakePictureIntent()
+            }
+            alertDialogBinding.galleryButton.setOnClickListener{
+                alertDialog.dismiss()
+                requestMediaAccessAndPickImage()
+            }
+            alertDialog.show()
         }
 
 
