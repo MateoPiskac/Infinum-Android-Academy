@@ -27,7 +27,7 @@ class ShowDetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
-        adapter = ReviewListAdapter()
+        adapter = ReviewListAdapter(requireContext())
         binding.reviewRecycler.adapter = adapter
         viewModel.setShow((arguments?.get("show") as? Show)!!)
         adapter.submitList(viewModel.getInitialReviewList())

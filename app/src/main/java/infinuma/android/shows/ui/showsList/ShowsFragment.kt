@@ -70,7 +70,7 @@ class ShowsFragment : Fragment() {
         if(tempPath=="")
             binding.profileButton.setImageResource(R.drawable.placeholder_profile_picture)
         else
-            Glide.with(requireContext()).load(Uri.parse(tempPath))
+            Glide.with(requireContext()).load(tempPath)
                 .into(binding.profileButton)
     }
 
