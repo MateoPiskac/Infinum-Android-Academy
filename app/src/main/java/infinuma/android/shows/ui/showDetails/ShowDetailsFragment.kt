@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
@@ -22,7 +22,7 @@ class ShowDetailsFragment : Fragment() {
     private var _binding: FragmentShowDetailsBinding? = null
     private val binding get() = _binding!!
     lateinit var adapter: ReviewListAdapter
-    private val viewModel: ShowDetailsViewModel by activityViewModels()
+    private val viewModel: ShowDetailsViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
