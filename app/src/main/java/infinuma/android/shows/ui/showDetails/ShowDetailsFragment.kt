@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.fragment.app.activityViewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
@@ -22,21 +22,19 @@ class ShowDetailsFragment : Fragment() {
     private var _binding: FragmentShowDetailsBinding? = null
     private val binding get() = _binding!!
     lateinit var adapter: ReviewListAdapter
-    private val viewModel = ShowDetailsViewModel()
+    private val viewModel: ShowDetailsViewModel by activityViewModels()
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
-        adapter = ReviewListAdapter(requireContext())
+        adapter = ReviewListAdapter()
         binding.reviewRecycler.adapter = adapter
         viewModel.setShow((arguments?.get("show") as? Show)!!)
-        adapter.submitList(viewModel.getInitialReviewList())
         initToolbar()
         viewModel.showLiveData.observe(viewLifecycleOwner) {
             adapter.submitList(it.toList())
         }
         binding.reviewButton.setOnClickListener {
-            viewModel.removeNoReviewsText()
+            viewModel.onReviewButtonClick()
             val writeReview = WriteReviewDialogFragment()
             writeReview.getReviews(viewModel.showLiveData.value!!)
             writeReview.show(childFragmentManager, "WriteReview")
@@ -71,7 +69,6 @@ class ShowDetailsFragment : Fragment() {
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(someBroadcastReceiver)
         super.onPause()
     }
-
 
     override fun onDestroy() {
         super.onDestroy()

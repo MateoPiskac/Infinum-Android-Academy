@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import infinuma.android.shows.data.Show
 import infinuma.android.shows.databinding.ShowsListItemBinding
 
-class ShowsListAdapter(private val shows: List<Show>, private val onItemClickCallback: (Show) -> Unit) :
+class ShowsListAdapter(private var shows: List<Show>, private val onItemClickCallback: (Show) -> Unit) :
     RecyclerView.Adapter<ShowsListAdapter.ShowsViewHolder>() {
 
     inner class ShowsViewHolder(private val binding: ShowsListItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -32,4 +32,10 @@ class ShowsListAdapter(private val shows: List<Show>, private val onItemClickCal
     override fun getItemCount(): Int {
         return shows.size
     }
+
+    fun submitList(newList: List<Show>) {
+        shows = newList
+    }
+
+
 }

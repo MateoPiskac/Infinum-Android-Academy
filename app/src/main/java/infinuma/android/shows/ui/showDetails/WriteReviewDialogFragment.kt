@@ -10,7 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import infinuma.android.shows.R
-import infinuma.android.shows.data.PROFILEPHOTOURI
+import infinuma.android.shows.data.PROFILE_PHOTO_URI
 import infinuma.android.shows.databinding.FragmentWriteReviewDialogBinding
 import infinuma.android.shows.ui.login.sharedPreferences
 import kotlin.math.roundToInt
@@ -22,7 +22,7 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
     private lateinit var review: ReviewListItem.Review
     private var reviews: MutableList<ReviewListItem> = mutableListOf()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWriteReviewDialogBinding.inflate(layoutInflater)
         binding.reviewInputField.setHintTextColor(Color.BLACK)
         binding.closeSheet.setOnClickListener {
@@ -36,13 +36,13 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
                 getString(R.string.placeholder_review_author),
                 binding.reviewInputField.text.toString(),
                 binding.reviewRatingInput.rating.toInt(),
-                sharedPreferences.getString(PROFILEPHOTOURI,"")!!
+                sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!
             )
             updateRatingBar()
 
             val intent = Intent("newShowList")
             intent.putExtra("reviewList", bundleOf("reviews" to reviews))
-            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent);
+            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
             this.dismiss()
         }
         return binding.root
@@ -51,11 +51,13 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
     private fun updateRatingBar() {
         if (reviews.size == 1) {
             reviews.add(1, ReviewListItem.Rating(review.rating.toFloat(), 1))
-            addReview(review.reviewerName, review.reviewText, review.rating,sharedPreferences.getString(PROFILEPHOTOURI,"")!!)
+            addReview(review.reviewerName, review.reviewText, review.rating, sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!)
         } else {
-            addReview(review.reviewerName, review.reviewText, review.rating,sharedPreferences.getString(PROFILEPHOTOURI,"")!!)
+            addReview(review.reviewerName, review.reviewText, review.rating, sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!)
             reviews[1] = ReviewListItem.Rating(
-                ((((reviews[1].toString().toFloat() * (reviews.size - 3)) + review.rating.toFloat()) / (reviews.size - 2))*100).roundToInt()/100f, reviews.size - 2
+                ((((reviews[1].toString()
+                    .toFloat() * (reviews.size - 3)) + review.rating.toFloat()) / (reviews.size - 2)) * 100).roundToInt() / 100f,
+                reviews.size - 2
             )
         }
     }
@@ -74,6 +76,7 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
             )
         )
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

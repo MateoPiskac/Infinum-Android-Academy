@@ -9,9 +9,12 @@ import infinuma.android.shows.data.showsList
 class ShowsViewModel : ViewModel() {
 
     private var _showsLiveData = MutableLiveData<List<Show>>()
+
     val showsLiveData: LiveData<List<Show>> get() = _showsLiveData
 
     fun fetchShows() {
         _showsLiveData.value = showsList
     }
+
+
 }

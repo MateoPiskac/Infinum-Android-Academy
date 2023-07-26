@@ -1,36 +1,30 @@
 package infinuma.android.shows.ui.showDetails
 
-import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import infinuma.android.shows.data.PROFILEPHOTOURI
 import infinuma.android.shows.databinding.ReviewListItemBinding
 import infinuma.android.shows.databinding.ShowDetailsItemBinding
 import infinuma.android.shows.databinding.ShowNoreviewsItemBinding
 import infinuma.android.shows.databinding.ShowRatingItemBinding
-import infinuma.android.shows.ui.login.sharedPreferences
 
 sealed class ReviewListItem {
     data class Review(val reviewerName: String, val reviewText: String, val rating: Int, val profilePhotoURI: String) : ReviewListItem()
     data class ShowDetails(val showImageResId: Int, val description: String) : ReviewListItem()
-    data class Rating(val averageRating: Float, val numberOfReviews : Int) : ReviewListItem()
-    {
+    data class Rating(val averageRating: Float, val numberOfReviews: Int) : ReviewListItem() {
         override fun toString(): String {
             return averageRating.toString()
         }
     }
-    object NoReviews: ReviewListItem()
+
+    object NoReviews : ReviewListItem()
 }
 
-class ReviewListAdapter(val context:Context) : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDetailReviewViewHolder>(DiffCallback()) {
+class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDetailReviewViewHolder>(DiffCallback()) {
     class DiffCallback : DiffUtil.ItemCallback<ReviewListItem>() {
         override fun areItemsTheSame(oldItem: ReviewListItem, newItem: ReviewListItem): Boolean {
             return oldItem === newItem
@@ -56,9 +50,9 @@ class ReviewListAdapter(val context:Context) : ListAdapter<ReviewListItem, Revie
                 binding.reviewAuthor.text = review.reviewerName
                 binding.reviewRating.text = review.rating.toString()
                 binding.reviewBody.text = review.reviewText
-//                THIS IS PREPARATION FOR CUSTOM REVIEW PROFILE PHOTOS
-//                Glide.with(adapterContext).load(sharedPreferences.getString(PROFILEPHOTOURI,""))
-//                    .into(binding.reviewAuthorProfilePicture)
+                //                THIS IS PREPARATION FOR CUSTOM REVIEW PROFILE PHOTOS
+                //                Glide.with(adapterContext).load(sharedPreferences.getString(PROFILEPHOTOURI,""))
+                //                    .into(binding.reviewAuthorProfilePicture)
             }
         }
 
@@ -68,15 +62,17 @@ class ReviewListAdapter(val context:Context) : ListAdapter<ReviewListItem, Revie
                 binding.showDescription.text = details.description
             }
         }
-        class RatingViewHolder(private var binding: ShowRatingItemBinding) : ShowDetailReviewViewHolder(binding.root){
 
-            fun bind(rating: ReviewListItem.Rating){
+        class RatingViewHolder(private var binding: ShowRatingItemBinding) : ShowDetailReviewViewHolder(binding.root) {
+
+            fun bind(rating: ReviewListItem.Rating) {
                 """${rating.numberOfReviews} REVIEWS ${rating.averageRating} AVERAGE""".also { binding.reviewRatingText.text = it }
                 binding.ratingBar.rating = rating.averageRating
             }
         }
-        class NoReviewViewHolder(private var binding: ShowNoreviewsItemBinding) : ShowDetailReviewViewHolder(binding.root){
-            fun bind(){
+
+        class NoReviewViewHolder(private var binding: ShowNoreviewsItemBinding) : ShowDetailReviewViewHolder(binding.root) {
+            fun bind() {
                 binding.noReviewsText.isVisible = true
             }
         }
@@ -105,6 +101,7 @@ class ReviewListAdapter(val context:Context) : ListAdapter<ReviewListItem, Revie
                 val binding = ShowNoreviewsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ShowDetailReviewViewHolder.NoReviewViewHolder(binding)
             }
+
             else -> {
                 throw IllegalStateException("Unknown viewType")
             }

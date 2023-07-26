@@ -58,19 +58,17 @@ class LoginFragment : Fragment() {
         sharedPreferences = requireContext().getSharedPreferences(LOGIN, Context.MODE_PRIVATE)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(layoutInflater)
         binding.emailInputField.addTextChangedListener(watcher)
         binding.passwordInputField.addTextChangedListener(watcher)
         binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
-        binding.loginCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            sharedPreferences.edit {
-                putBoolean(REMEMBER_LOGIN, isChecked)
-                apply()
-            }
-        }
 
         binding.loginButton.setOnClickListener {
+            sharedPreferences.edit {
+                putBoolean(REMEMBER_LOGIN, binding.loginCheckbox.isChecked)
+                apply()
+            }
             sharedPreferences.edit {
                 putString(USERNAME, binding.emailInputField.text.toString())
             }

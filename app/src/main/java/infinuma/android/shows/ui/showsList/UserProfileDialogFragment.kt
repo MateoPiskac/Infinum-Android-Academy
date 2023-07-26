@@ -21,10 +21,10 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import infinuma.android.shows.R
-import infinuma.android.shows.data.PROFILEPHOTOURI
+import infinuma.android.shows.data.PROFILE_PHOTO_URI
 import infinuma.android.shows.data.REMEMBER_LOGIN
 import infinuma.android.shows.data.USERNAME
-import infinuma.android.shows.databinding.FragmentUserProfileListDialogBinding
+import infinuma.android.shows.databinding.FragmentUserProfileDialogBinding
 import infinuma.android.shows.databinding.ProfilePhotoAlertDialogBinding
 import infinuma.android.shows.ui.login.sharedPreferences
 import java.io.File
@@ -32,7 +32,7 @@ import java.io.IOException
 
 class UserProfileDialogFragment : BottomSheetDialogFragment() {
 
-    private var _binding: FragmentUserProfileListDialogBinding? = null
+    private var _binding: FragmentUserProfileDialogBinding? = null
     private lateinit var alertDialogBinding: ProfilePhotoAlertDialogBinding
     private val binding get() = _binding!!
     private val REQUEST_IMAGE_CAPTURE = 1
@@ -42,47 +42,54 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentUserProfileListDialogBinding.inflate(inflater, container, false)
-        alertDialogBinding = ProfilePhotoAlertDialogBinding.inflate(layoutInflater)
-        alertDialogBinding.cameraButton.setOnClickListener {
-            dispatchTakePictureIntent()
-        }
+        _binding = FragmentUserProfileDialogBinding.inflate(inflater, container, false)
         binding.userEmail.text = sharedPreferences.getString(USERNAME, getString(R.string.placeholder_review_author))
-        val tempPath = sharedPreferences.getString(PROFILEPHOTOURI, "")
-        if (tempPath == "") binding.userProfilePicture.setImageResource(R.drawable.placeholder_profile_picture)
-        else  Glide.with(requireContext()).load(tempPath)
-            .into(binding.userProfilePicture)
+
+        val tempPath = sharedPreferences.getString(PROFILE_PHOTO_URI, "")
+        if (tempPath == "")
+            binding.userProfilePicture.setImageResource(R.drawable.placeholder_profile_picture)
+        else
+            Glide.with(requireContext()).load(tempPath)
+                .into(binding.userProfilePicture)
         binding.logoutButton.setOnClickListener {
             val builder =
                 AlertDialog.Builder(requireContext()).setMessage("Are you sure you want to logout?").setTitle("Logout?").setCancelable(true)
                     .setPositiveButton("Yes") { dialog, _ ->
+
                         sharedPreferences.edit {
                             putBoolean(REMEMBER_LOGIN, false)
                             apply()
                         }
                         dialog.cancel()
                         findNavController().navigate(R.id.action_showsFragment_to_loginFragment)
+
                     }.setNegativeButton("No") { dialog, _ ->
+
                         dialog.cancel()
-                    }.create().show()
+
+                    }
+                    .create()
+                    .show()
         }
 
         binding.changePhotoButton.setOnClickListener {
+            alertDialogBinding = ProfilePhotoAlertDialogBinding.inflate(layoutInflater)
+
             val alertBuilder = AlertDialog.Builder(requireContext())
-                .setView(alertDialogBinding.root)
+                .setView(alertDialogBinding.alertLayout)
+                .setCancelable(true)
             val alertDialog = alertBuilder.create()
+
             alertDialogBinding.cameraButton.setOnClickListener {
                 alertDialog.dismiss()
                 dispatchTakePictureIntent()
             }
-            alertDialogBinding.galleryButton.setOnClickListener{
+            alertDialogBinding.galleryButton.setOnClickListener {
                 alertDialog.dismiss()
                 requestMediaAccessAndPickImage()
             }
             alertDialog.show()
         }
-
-
 
         return binding.root
 
@@ -126,7 +133,7 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun requestCameraPermission() {
-        requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+        ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
     }
 
     private fun requestMediaAccessAndPickImage() {
@@ -136,7 +143,8 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
         ) {
             dispatchPickImageIntent()
         } else {
-            requestPermissions(arrayOf(Manifest.permission.READ_MEDIA_IMAGES), REQUEST_PICK_IMAGE
+            ActivityCompat.requestPermissions(
+                requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_PICK_IMAGE
             )
         }
     }
@@ -166,7 +174,7 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
                 REQUEST_IMAGE_CAPTURE -> {
                     binding.userProfilePicture.setImageURI(photoUri)
                     sharedPreferences.edit {
-                        putString(PROFILEPHOTOURI, photoUri.toString())
+                        putString(PROFILE_PHOTO_URI, photoUri.toString())
                         commit()
                     }
                 }
@@ -175,7 +183,7 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
                     val imageUri: Uri? = data?.data
                     if (imageUri != null) {
                         sharedPreferences.edit {
-                            putString(PROFILEPHOTOURI, imageUri.toString())
+                            putString(PROFILE_PHOTO_URI, imageUri.toString())
                             commit()
                         }
                         Glide.with(requireContext()).load(imageUri)

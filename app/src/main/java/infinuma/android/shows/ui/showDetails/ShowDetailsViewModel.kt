@@ -13,11 +13,15 @@ class ShowDetailsViewModel : ViewModel() {
 
     init {
         _showLiveData.value = mutableListOf()
+
     }
+
     fun setShow(showClicked: Show) {
         show = showClicked
+        _showLiveData.value = getInitialReviewList()
     }
-    fun getShow() : Show =show
+
+    fun getShow(): Show = show
 
     fun getInitialReviewList(): MutableList<ReviewListItem> {
         _showLiveData.value?.add(ReviewListItem.ShowDetails(show.image, show.description))
@@ -25,12 +29,13 @@ class ShowDetailsViewModel : ViewModel() {
         return _showLiveData.value!!
     }
 
-    fun removeNoReviewsText() {
+    fun onReviewButtonClick() {
         _showLiveData.value?.removeIf { it == ReviewListItem.NoReviews }
 
     }
-    fun addReviews(reviewsList: MutableList<ReviewListItem>){
-        _showLiveData.value=reviewsList.toMutableList()
+
+    fun addReviews(reviewsList: MutableList<ReviewListItem>) {
+        _showLiveData.value = reviewsList.toMutableList()
     }
 
 
