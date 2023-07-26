@@ -13,15 +13,15 @@ import infinuma.android.shows.databinding.ShowNoreviewsItemBinding
 import infinuma.android.shows.databinding.ShowRatingItemBinding
 
 sealed class ReviewListItem {
-    data class Review(val reviewerName: String, val reviewText: String, val rating: Int) : ReviewListItem()
+    data class Review(val reviewerName: String, val reviewText: String, val rating: Int, val profilePhotoURI: String) : ReviewListItem()
     data class ShowDetails(val showImageResId: Int, val description: String) : ReviewListItem()
-    data class Rating(val averageRating: Float, val numberOfReviews : Int) : ReviewListItem()
-    {
+    data class Rating(val averageRating: Float, val numberOfReviews: Int) : ReviewListItem() {
         override fun toString(): String {
             return averageRating.toString()
         }
     }
-    object NoReviews: ReviewListItem()
+
+    object NoReviews : ReviewListItem()
 }
 
 class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDetailReviewViewHolder>(DiffCallback()) {
@@ -50,6 +50,9 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
                 binding.reviewAuthor.text = review.reviewerName
                 binding.reviewRating.text = review.rating.toString()
                 binding.reviewBody.text = review.reviewText
+                //                THIS IS PREPARATION FOR CUSTOM REVIEW PROFILE PHOTOS
+                //                Glide.with(adapterContext).load(sharedPreferences.getString(PROFILEPHOTOURI,""))
+                //                    .into(binding.reviewAuthorProfilePicture)
             }
         }
 
@@ -59,15 +62,17 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
                 binding.showDescription.text = details.description
             }
         }
-        class RatingViewHolder(private var binding: ShowRatingItemBinding) : ShowDetailReviewViewHolder(binding.root){
 
-            fun bind(rating: ReviewListItem.Rating){
+        class RatingViewHolder(private var binding: ShowRatingItemBinding) : ShowDetailReviewViewHolder(binding.root) {
+
+            fun bind(rating: ReviewListItem.Rating) {
                 """${rating.numberOfReviews} REVIEWS ${rating.averageRating} AVERAGE""".also { binding.reviewRatingText.text = it }
                 binding.ratingBar.rating = rating.averageRating
             }
         }
-        class NoReviewViewHolder(private var binding: ShowNoreviewsItemBinding) : ShowDetailReviewViewHolder(binding.root){
-            fun bind(){
+
+        class NoReviewViewHolder(private var binding: ShowNoreviewsItemBinding) : ShowDetailReviewViewHolder(binding.root) {
+            fun bind() {
                 binding.noReviewsText.isVisible = true
             }
         }
@@ -96,6 +101,7 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
                 val binding = ShowNoreviewsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 ShowDetailReviewViewHolder.NoReviewViewHolder(binding)
             }
+
             else -> {
                 throw IllegalStateException("Unknown viewType")
             }

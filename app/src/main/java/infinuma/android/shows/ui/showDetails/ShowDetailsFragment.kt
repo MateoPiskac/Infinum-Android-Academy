@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
@@ -20,27 +21,23 @@ class ShowDetailsFragment : Fragment() {
 
     private var _binding: FragmentShowDetailsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var show: Show
     lateinit var adapter: ReviewListAdapter
-    private var reviewList: MutableList<ReviewListItem> = mutableListOf()
+    private val viewModel: ShowDetailsViewModel by viewModels()
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
         adapter = ReviewListAdapter()
         binding.reviewRecycler.adapter = adapter
-        show = (arguments?.get("show") as? Show)!!
+        viewModel.setShow((arguments?.get("show") as? Show)!!)
         initToolbar()
-        reviewList.add(ReviewListItem.ShowDetails(show.image, show.description))
-        reviewList.add(ReviewListItem.NoReviews)
-        adapter.submitList(reviewList.toList())
-
+        viewModel.showLiveData.observe(viewLifecycleOwner) {
+            adapter.submitList(it.toList())
+        }
         binding.reviewButton.setOnClickListener {
+            viewModel.onReviewButtonClick()
             val writeReview = WriteReviewDialogFragment()
-            reviewList.removeIf { it == ReviewListItem.NoReviews }
-            writeReview.getReviews(reviewList)
+            writeReview.getReviews(viewModel.showLiveData.value!!)
             writeReview.show(childFragmentManager, "WriteReview")
-            adapter.submitList(reviewList.toList())
         }
         return binding.root
     }
@@ -51,16 +48,14 @@ class ShowDetailsFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
         binding.toolbar.setNavigationOnClickListener { findNavController().navigate(R.id.action_showDetailsFragment_to_showsFragment) }
-        binding.toolbarLayout.title = show.title
+        binding.toolbarLayout.title = viewModel.getShow().title
     }
 
     private val someBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            reviewList = intent.getBundleExtra("reviewList")?.get("reviews") as MutableList<ReviewListItem>
-            adapter.submitList(reviewList.toList())
+            viewModel.addReviews(intent.getBundleExtra("reviewList")?.get("reviews") as MutableList<ReviewListItem>)
         }
     }
-
 
     override fun onResume() {
         super.onResume()
