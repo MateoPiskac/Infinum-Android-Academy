@@ -12,7 +12,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import infinuma.android.shows.R
 import infinuma.android.shows.data.PROFILE_PHOTO_URI
 import infinuma.android.shows.databinding.FragmentWriteReviewDialogBinding
-import infinuma.android.shows.ui.login.sharedPreferences
+import infinuma.android.shows.models.User
+import infinuma.android.shows.ui.sharedPreferences
 import kotlin.math.roundToInt
 
 class WriteReviewDialogFragment : BottomSheetDialogFragment() {
@@ -36,7 +37,12 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
                 getString(R.string.placeholder_review_author),
                 binding.reviewInputField.text.toString(),
                 binding.reviewRatingInput.rating.toInt(),
-                sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!
+                123,
+                User(
+                    sharedPreferences.getString("id", "0")!!,
+                    sharedPreferences.getString("email", "")!!,
+                    sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!
+                )
             )
             updateRatingBar()
 
@@ -51,9 +57,9 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
     private fun updateRatingBar() {
         if (reviews.size == 1) {
             reviews.add(1, ReviewListItem.Rating(review.rating.toFloat(), 1))
-            addReview(review.reviewerName, review.reviewText, review.rating, sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!)
+           // addReview(review.reviewerName, review.reviewText, review.rating, sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!)
         } else {
-            addReview(review.reviewerName, review.reviewText, review.rating, sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!)
+            //addReview(review.reviewerName, review.reviewText, review.rating, sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!)
             reviews[1] = ReviewListItem.Rating(
                 ((((reviews[1].toString()
                     .toFloat() * (reviews.size - 3)) + review.rating.toFloat()) / (reviews.size - 2)) * 100).roundToInt() / 100f,
@@ -66,13 +72,18 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
         reviews = mutableList
     }
 
-    private fun addReview(author: String, review: String, rating: Int, photoUri: String) {
+    private fun addReview(id: String, review: String, rating: Int, showId: Int, user: User) {
         reviews.add(
             ReviewListItem.Review(
-                author,
+                id,
                 review,
                 rating,
-                photoUri
+                showId,
+                User(
+                    sharedPreferences.getString("id", "0")!!,
+                    sharedPreferences.getString("email", "")!!,
+                    sharedPreferences.getString(PROFILE_PHOTO_URI, "")!!
+                )
             )
         )
     }

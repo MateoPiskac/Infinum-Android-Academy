@@ -26,7 +26,7 @@ import infinuma.android.shows.data.REMEMBER_LOGIN
 import infinuma.android.shows.data.USERNAME
 import infinuma.android.shows.databinding.FragmentUserProfileDialogBinding
 import infinuma.android.shows.databinding.ProfilePhotoAlertDialogBinding
-import infinuma.android.shows.ui.login.sharedPreferences
+import infinuma.android.shows.ui.sharedPreferences
 import java.io.File
 import java.io.IOException
 

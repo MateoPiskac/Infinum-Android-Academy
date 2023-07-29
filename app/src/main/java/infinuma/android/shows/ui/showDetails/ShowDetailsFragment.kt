@@ -21,7 +21,7 @@ class ShowDetailsFragment : Fragment() {
 
     private var _binding: FragmentShowDetailsBinding? = null
     private val binding get() = _binding!!
-    lateinit var adapter: ReviewListAdapter
+    private lateinit var adapter: ReviewListAdapter
     private val viewModel: ShowDetailsViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -33,6 +33,7 @@ class ShowDetailsFragment : Fragment() {
         viewModel.showLiveData.observe(viewLifecycleOwner) {
             adapter.submitList(it.toList())
         }
+        viewModel.loadReviews()
         binding.reviewButton.setOnClickListener {
             viewModel.onReviewButtonClick()
             val writeReview = WriteReviewDialogFragment()

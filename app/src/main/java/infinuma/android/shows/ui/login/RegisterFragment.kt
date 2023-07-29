@@ -1,60 +1,89 @@
 package infinuma.android.shows.ui.login
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
+import infinuma.android.shows.data.EMAIL_REGEX
+import infinuma.android.shows.data.REGISTER_RESULT
+import infinuma.android.shows.databinding.FragmentRegisterBinding
+import infinuma.android.shows.networking.ApiModule
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [RegisterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RegisterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private var _binding: FragmentRegisterBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel : RegisterViewModel by viewModels()
+
+    private val watcher = object : TextWatcher {
+        override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+            binding.emailInputField.error = null
         }
+
+        override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
+            binding.emailInputField.error = null
+            if (binding.emailInputField.text?.matches(EMAIL_REGEX) == true && (binding.passwordInputField.text?.length
+                    ?: 0) >= 6 && binding.passwordInputField.text.toString() == binding.confirmPasswordInputField.text.toString()
+            ) {
+                binding.emailInputField.error = null
+                binding.registerButton.isEnabled = true
+                binding.registerButton.setTextColor(ContextCompat.getColor(context!!, R.color.purple))
+
+            } else {
+                if (binding.emailInputField.text?.matches(EMAIL_REGEX) == false)
+                    binding.emailInputField.error = "Invalid Email"
+                binding.registerButton.isEnabled = false
+                binding.registerButton.setTextColor(ContextCompat.getColor(context!!, R.color.white))
+            }
+        }
+
+        override fun afterTextChanged(text: Editable?) {
+        }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_register, container, false)
+    ): View {
+        _binding = FragmentRegisterBinding.inflate(layoutInflater)
+        initEditText()
+        initRegisterButton()
+        viewModel.registrationResultLiveData.observe(viewLifecycleOwner){
+            if(viewModel.registrationResultLiveData.value == true){
+                findNavController().navigate(R.id.action_registerFragment_to_loginFragment, bundleOf(REGISTER_RESULT to viewModel.registrationResultLiveData.value!!))
+            }
+        }
+
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RegisterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RegisterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun initRegisterButton() {
+        binding.registerButton.setOnClickListener {
+            viewModel.onRegisterButtonClick(
+                binding.emailInputField.text.toString().trim(),
+                binding.passwordInputField.text.toString().trim()
+            )
+        }
     }
+
+    private fun initEditText() {
+        binding.emailInputField.addTextChangedListener(watcher)
+        binding.passwordInputField.addTextChangedListener(watcher)
+        binding.confirmPasswordInputField.addTextChangedListener(watcher)
+        binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
+        binding.confirmPasswordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
+    }
+
+
 }

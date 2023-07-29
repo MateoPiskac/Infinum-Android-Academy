@@ -1,9 +1,14 @@
 package infinuma.android.shows.ui.showDetails
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import infinuma.android.shows.data.Show
+import infinuma.android.shows.networking.ApiModule
+import infinuma.android.shows.ui.sharedPreferences
+import kotlinx.coroutines.launch
 
 class ShowDetailsViewModel : ViewModel() {
 
@@ -13,7 +18,6 @@ class ShowDetailsViewModel : ViewModel() {
 
     init {
         _showLiveData.value = mutableListOf()
-
     }
 
     fun setShow(showClicked: Show) {
@@ -23,9 +27,9 @@ class ShowDetailsViewModel : ViewModel() {
 
     fun getShow(): Show = show
 
-    fun getInitialReviewList(): MutableList<ReviewListItem> {
+    private fun getInitialReviewList(): MutableList<ReviewListItem> {
         _showLiveData.value?.add(ReviewListItem.ShowDetails(show.image, show.description))
-        _showLiveData.value?.add(ReviewListItem.NoReviews)
+        _showLiveData.value?.add(ReviewListItem.Rating(show.averageRating ?: 0f, show.numOfReviews))
         return _showLiveData.value!!
     }
 
@@ -38,5 +42,34 @@ class ShowDetailsViewModel : ViewModel() {
         _showLiveData.value = reviewsList.toMutableList()
     }
 
+    fun loadReviews() {
+        viewModelScope.launch {
+            try {
+                val response = getReviews(show.showId)
+                Log.e("GET REVIEWS", response.toString())
+                for (review in response.reviews) {
+                    _showLiveData.value?.add(
+                        ReviewListItem.Review(
+                            review.id,
+                            review.comment,
+                            review.rating,
+                            review.showId,
+                            review.user
+                        )
+                    )
+                }
+                Log.e("GET RETVAL", _showLiveData.value.toString())
+            } catch (e: Exception) {
+                Log.e("GET REVIEWS", e.toString())
+            }
+        }
+    }
 
+    private suspend fun getReviews(showId: Int) =
+        ApiModule.retrofit.getReviews(
+            showId,
+            sharedPreferences.getString("access-token", "").toString(),
+            sharedPreferences.getString("client", "").toString(),
+            sharedPreferences.getString("uid", "").toString()
+        )
 }

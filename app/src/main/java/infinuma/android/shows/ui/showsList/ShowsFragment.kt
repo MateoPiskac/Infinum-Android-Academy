@@ -16,7 +16,7 @@ import infinuma.android.shows.data.PROFILE_PHOTO_URI
 import infinuma.android.shows.data.SHOW
 import infinuma.android.shows.data.USER_PROFILE
 import infinuma.android.shows.databinding.FragmentShowsBinding
-import infinuma.android.shows.ui.login.sharedPreferences
+import infinuma.android.shows.ui.sharedPreferences
 
 class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
@@ -31,38 +31,42 @@ class ShowsFragment : Fragment() {
         _binding = FragmentShowsBinding.inflate(layoutInflater)
         binding.profileButton.isVisible = true
         viewModel.fetchShows()
-        adapter = ShowsListAdapter(viewModel.showsLiveData.value!!) {
-            val bundle = bundleOf(SHOW to it)
-            findNavController().navigate(R.id.action_showsFragment_to_showDetailsFragment, bundle)
-        }
+        initAdapter()
         viewModel.showsLiveData.observe(viewLifecycleOwner, Observer { shows ->
             adapter.submitList(shows)
         })
         binding.recyclerView.adapter = adapter
 
         binding.loadShowsButton.setOnClickListener {
-            loadShows()
+            displayShowsList()
         }
+
         binding.profileButton.setOnClickListener {
             val userProfile = UserProfileDialogFragment()
-
             userProfile.show(childFragmentManager, USER_PROFILE)
-
         }
         return binding.root
     }
 
-    private fun loadShows() {
+    private fun initAdapter() {
+        adapter = ShowsListAdapter(emptyList()) {
+            val bundle = bundleOf(SHOW to it)
+            findNavController().navigate(R.id.action_showsFragment_to_showDetailsFragment, bundle)
+        }
+    }
+
+    private fun displayShowsList() {
         binding.emptyListIcon.isVisible = false
         binding.emptyListText.isVisible = false
         binding.loadShowsButton.isVisible = false
         binding.recyclerView.isVisible = true
+
     }
 
     override fun onResume() {
         super.onResume()
-        val tempPath = sharedPreferences.getString(PROFILE_PHOTO_URI,"")
-        if(tempPath=="")
+        val tempPath = sharedPreferences.getString(PROFILE_PHOTO_URI, "")
+        if (tempPath == "")
             binding.profileButton.setImageResource(R.drawable.placeholder_profile_picture)
         else
             Glide.with(requireContext()).load(tempPath)

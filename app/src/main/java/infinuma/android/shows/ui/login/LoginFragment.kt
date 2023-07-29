@@ -9,22 +9,27 @@ import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
+import infinuma.android.shows.data.EMAIL_REGEX
 import infinuma.android.shows.data.LOGIN
+import infinuma.android.shows.data.REGISTER_RESULT
 import infinuma.android.shows.data.REMEMBER_LOGIN
 import infinuma.android.shows.data.USERNAME
 import infinuma.android.shows.databinding.FragmentLoginBinding
-
-lateinit var sharedPreferences: SharedPreferences
+import infinuma.android.shows.networking.ApiModule
+import infinuma.android.shows.ui.sharedPreferences
 
 class LoginFragment : Fragment() {
-    private val emailRegex: Regex = Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+    private val viewModel : LoginViewModel by viewModels()
 
     private val watcher = object : TextWatcher {
         override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
@@ -33,7 +38,7 @@ class LoginFragment : Fragment() {
 
         override fun onTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
             binding.emailInputField.error = null
-            if (binding.emailInputField.text?.matches(emailRegex) == true && (binding.passwordInputField.text?.length
+            if (binding.emailInputField.text?.matches(EMAIL_REGEX) == true && (binding.passwordInputField.text?.length
                     ?: 0) >= 6
             ) {
                 binding.emailInputField.error = null
@@ -41,7 +46,7 @@ class LoginFragment : Fragment() {
                 binding.loginButton.setTextColor(ContextCompat.getColor(context!!, R.color.purple))
 
             } else {
-                if (binding.emailInputField.text?.matches(emailRegex) == false)
+                if (binding.emailInputField.text?.matches(EMAIL_REGEX) == false)
                     binding.emailInputField.error = "Invalid Email"
                 binding.loginButton.isEnabled = false
                 binding.loginButton.setTextColor(ContextCompat.getColor(context!!, R.color.white))
@@ -60,21 +65,44 @@ class LoginFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(layoutInflater)
-        binding.emailInputField.addTextChangedListener(watcher)
-        binding.passwordInputField.addTextChangedListener(watcher)
-        binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
+        initEditText()
+        if(arguments?.getBoolean(REGISTER_RESULT) == true){
+            binding.loginText.text=getString(R.string.registration_succesful)
+            binding.registerTextButton.isVisible = false
+        }else{
+            binding.registerTextButton.setOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            }
+        }
+        viewModel.loginResultLiveData.observe(requireActivity()){
+            if(viewModel.loginResultLiveData.value==true){
+                sharedPreferences.edit {
+                    putBoolean(REMEMBER_LOGIN, binding.loginCheckbox.isChecked)
+                    apply()
+                }
+                findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+            }
+        }
 
         binding.loginButton.setOnClickListener {
-            sharedPreferences.edit {
-                putBoolean(REMEMBER_LOGIN, binding.loginCheckbox.isChecked)
-                apply()
-            }
+            viewModel.onLoginButtonClick(
+                binding.emailInputField.text.toString().trim(),
+                binding.passwordInputField.text.toString().trim()
+            )
             sharedPreferences.edit {
                 putString(USERNAME, binding.emailInputField.text.toString())
             }
-            findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
         }
+//        binding.registerTextButton.setOnClickListener {
+//            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+//        }
         return binding.root
+    }
+
+    private fun initEditText() {
+        binding.emailInputField.addTextChangedListener(watcher)
+        binding.passwordInputField.addTextChangedListener(watcher)
+        binding.passwordInputField.transformationMethod = PasswordTransformationMethod.getInstance()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

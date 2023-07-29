@@ -50,13 +50,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
         android:layout_marginStart="24dp"
-        android:layout_marginEnd="278dp"
         android:text="@string/login"
         android:textAppearance="@style/title"
         android:lineSpacingExtra="1sp"
         android:gravity="top"
         app:layout_constraintBottom_toTopOf="@id/loginInstructions"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appTitle"
         />
@@ -132,11 +130,13 @@
         android:id="@+id/loginCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/passwordInput"
-        app:layout_constraintStart_toStartOf="@id/passwordInput"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="25dp"
         android:buttonTint="@color/white"
-        android:text="@string/remember_me"/>
+        android:text="@string/remember_me"
+        app:layout_constraintBottom_toTopOf="@+id/loginButton"
+        app:layout_constraintStart_toStartOf="@id/passwordInput"
+        app:layout_constraintTop_toBottomOf="@id/passwordInput"/>
 
     <Button
         android:id="@+id/loginButton"
@@ -149,9 +149,23 @@
         android:text="@string/login"
         android:textColor="@color/white"
         android:contentDescription="@string/login"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/registerTextButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="DuplicateSpeakableTextCheck,VisualLintButtonSize"/>
+
+    <Button
+        android:id="@+id/registerTextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/register"
+        android:layout_marginHorizontal="24dp"
+        android:backgroundTint="@color/purple"
+        android:textAppearance="@style/input_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="32dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
