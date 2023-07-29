@@ -34,6 +34,9 @@ class ShowDetailsFragment : Fragment() {
             adapter.submitList(it.toList())
         }
         viewModel.loadReviews()
+        viewModel.reviewListUpdated.observe(viewLifecycleOwner) {
+            adapter.submitList(viewModel.showLiveData.value!!.toList())
+        }
         binding.reviewButton.setOnClickListener {
             viewModel.onReviewButtonClick()
             val writeReview = WriteReviewDialogFragment()

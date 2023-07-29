@@ -15,6 +15,7 @@ class ShowDetailsViewModel : ViewModel() {
     private var _showLiveData = MutableLiveData<MutableList<ReviewListItem>>()
     val showLiveData: LiveData<MutableList<ReviewListItem>> get() = _showLiveData
     private lateinit var show: Show
+    var reviewListUpdated : MutableLiveData<Boolean> = MutableLiveData(false)
 
     init {
         _showLiveData.value = mutableListOf()
@@ -59,8 +60,10 @@ class ShowDetailsViewModel : ViewModel() {
                     )
                 }
                 Log.e("GET RETVAL", _showLiveData.value.toString())
+                reviewListUpdated.value = true
             } catch (e: Exception) {
                 Log.e("GET REVIEWS", e.toString())
+                reviewListUpdated.value = false
             }
         }
     }
