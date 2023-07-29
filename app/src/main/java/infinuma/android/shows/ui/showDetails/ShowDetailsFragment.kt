@@ -23,6 +23,7 @@ class ShowDetailsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: ReviewListAdapter
     private val viewModel: ShowDetailsViewModel by viewModels()
+    private lateinit var writeReview: WriteReviewDialogFragment
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
@@ -39,10 +40,18 @@ class ShowDetailsFragment : Fragment() {
         }
         binding.reviewButton.setOnClickListener {
             viewModel.onReviewButtonClick()
-            val writeReview = WriteReviewDialogFragment()
-            writeReview.getReviews(viewModel.showLiveData.value!!)
+            writeReview = WriteReviewDialogFragment()
+            writeReview.getShowDetails(viewModel.showLiveData.value?.get(1).toString().toFloat(),viewModel.getShowId())
             writeReview.show(childFragmentManager, "WriteReview")
+            writeReview.reviewAdded.observe(viewLifecycleOwner) {
+                if(writeReview.reviewAdded.value == true){
+                    writeReview.dismiss()
+                    viewModel.loadReviews()
+                    writeReview.reviewAdded.value = false
+                }
+            }
         }
+
         return binding.root
     }
 
@@ -57,7 +66,7 @@ class ShowDetailsFragment : Fragment() {
 
     private val someBroadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            viewModel.addReviews(intent.getBundleExtra("reviewList")?.get("reviews") as MutableList<ReviewListItem>)
+            viewModel.showLiveData.value?.add(intent.getBundleExtra("reviewList")?.get("reviews") as ReviewListItem.Review)
         }
     }
 

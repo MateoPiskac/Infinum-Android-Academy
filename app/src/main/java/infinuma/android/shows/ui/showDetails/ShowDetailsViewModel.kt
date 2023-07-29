@@ -27,6 +27,7 @@ class ShowDetailsViewModel : ViewModel() {
     }
 
     fun getShow(): Show = show
+    fun getShowId(): Int = show.showId
 
     private fun getInitialReviewList(): MutableList<ReviewListItem> {
         _showLiveData.value?.add(ReviewListItem.ShowDetails(show.image, show.description))
@@ -39,11 +40,9 @@ class ShowDetailsViewModel : ViewModel() {
 
     }
 
-    fun addReviews(reviewsList: MutableList<ReviewListItem>) {
-        _showLiveData.value = reviewsList.toMutableList()
-    }
-
     fun loadReviews() {
+        _showLiveData.value = mutableListOf()
+        getInitialReviewList()
         viewModelScope.launch {
             try {
                 val response = getReviews(show.showId)
@@ -60,10 +59,9 @@ class ShowDetailsViewModel : ViewModel() {
                     )
                 }
                 Log.e("GET RETVAL", _showLiveData.value.toString())
-                reviewListUpdated.value = true
+                reviewListUpdated.value = !reviewListUpdated.value!!
             } catch (e: Exception) {
                 Log.e("GET REVIEWS", e.toString())
-                reviewListUpdated.value = false
             }
         }
     }

@@ -1,5 +1,6 @@
 package infinuma.android.shows.networking
 
+import infinuma.android.shows.models.AddReviewRequest
 import infinuma.android.shows.models.GetReviewsResponse
 import infinuma.android.shows.models.GetShowsResponse
 import infinuma.android.shows.models.RegisterRequest
@@ -38,8 +39,14 @@ interface ShowsApiService {
         @Header("uid") uid: String
     ): GetReviewsResponse
 
+    @POST("/reviews")
+    @Headers("token-type: Bearer")
+    suspend fun addReview(
+        @Body request: AddReviewRequest,
+        @Header("access-token") accessToken: String,
+        @Header("client") client: String,
+        @Header("uid") uid: String
+    ): GetReviewsResponse
 }
 
-//@POST("/reviews")
-//@GET("/shows/{show_id}/reviews")
 //@GET("/shows/top_rated")
