@@ -19,6 +19,7 @@ class ShowDetailsViewModel : ViewModel() {
     var reviewListUpdated : MutableLiveData<Boolean> = MutableLiveData(false)
     private val _isLoading : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isLoading : LiveData<Boolean> = _isLoading
+    var averageRating : Float = 0f
     init {
         _showLiveData.value = mutableListOf()
     }
@@ -50,6 +51,7 @@ class ShowDetailsViewModel : ViewModel() {
             try {
                 val response = getReviews(show.showId)
                 for (review in response.reviews) {
+                    averageRating += review.rating
                     _showLiveData.value?.add(
                         ReviewListItem.Review(
                             review.id,
@@ -60,6 +62,8 @@ class ShowDetailsViewModel : ViewModel() {
                         )
                     )
                 }
+                averageRating /= response.reviews.size
+                _showLiveData.value!![1]= ReviewListItem.Rating(averageRating, response.reviews.size)
                 reviewListUpdated.value = !reviewListUpdated.value!!
             } catch (e: Exception) {
                 Log.e("GET REVIEWS", e.toString())

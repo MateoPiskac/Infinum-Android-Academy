@@ -24,11 +24,15 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = loginUser(username = username, password = password)
-                accessToken= response.headers()["access-token"]
-                client= response.headers()["client"]
-                uid= response.headers()["uid"]
-                sharedPreferences.edit().putString(PROFILE_PHOTO_URI, response.body()?.user?.imageUrl).apply()
-                _loginResultLiveData.value = true
+                if(response.isSuccessful) {
+                    accessToken = response.headers()["access-token"]
+                    client = response.headers()["client"]
+                    uid = response.headers()["uid"]
+                    sharedPreferences.edit().putString(PROFILE_PHOTO_URI, response.body()?.user?.imageUrl).apply()
+                    _loginResultLiveData.value = true
+                }
+                else
+                    _loginResultLiveData.value = false
             }
             catch (registrationFail : Exception){
                 Log.e("LOGIN FAIL", registrationFail.toString())
