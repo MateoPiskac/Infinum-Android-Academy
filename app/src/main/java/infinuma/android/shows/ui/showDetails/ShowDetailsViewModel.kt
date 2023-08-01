@@ -50,6 +50,7 @@ class ShowDetailsViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = getReviews(show.showId)
+                var averageRating : Float = 0f
                 for (review in response.reviews) {
                     averageRating += review.rating
                     _showLiveData.value?.add(
