@@ -14,8 +14,10 @@ class RegisterViewModel : ViewModel() {
 
     private val _registrationResultLiveData : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val registrationResultLiveData: LiveData<Boolean> = _registrationResultLiveData
-
+    private val _isLoading : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isLoading : LiveData<Boolean> = _isLoading
     fun onRegisterButtonClick(username: String, password: String) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 registerUser(username = username, password = password)
@@ -25,6 +27,7 @@ class RegisterViewModel : ViewModel() {
                 Log.e("REGISTER FAIL", registrationFail.toString())
                 _registrationResultLiveData.value = false
             }
+            _isLoading.value = false
         }
     }
 

@@ -4,25 +4,27 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.data.EMAIL_REGEX
 import infinuma.android.shows.data.REGISTER_RESULT
 import infinuma.android.shows.databinding.FragmentRegisterBinding
-import infinuma.android.shows.networking.ApiModule
+import infinuma.android.shows.ui.MainActivity
 
 class RegisterFragment : Fragment() {
 
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
-    private val viewModel : RegisterViewModel by viewModels()
+    private val viewModel: RegisterViewModel by viewModels()
+    private lateinit var loading : AlertDialog
 
     private val watcher = object : TextWatcher {
         override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
@@ -58,18 +60,28 @@ class RegisterFragment : Fragment() {
         _binding = FragmentRegisterBinding.inflate(layoutInflater)
         initEditText()
         initRegisterButton()
-        viewModel.registrationResultLiveData.observe(viewLifecycleOwner){
-            if(viewModel.registrationResultLiveData.value == true){
-                findNavController().navigate(R.id.action_registerFragment_to_loginFragment, bundleOf(REGISTER_RESULT to viewModel.registrationResultLiveData.value!!))
+        viewModel.registrationResultLiveData.observe(viewLifecycleOwner) {
+            if (viewModel.registrationResultLiveData.value == true) {
+                findNavController().navigate(
+                    R.id.action_registerFragment_to_loginFragment,
+                    bundleOf(REGISTER_RESULT to viewModel.registrationResultLiveData.value!!)
+                )
             }
         }
-
+        viewModel.isLoading.observe(requireActivity()) {
+            if (viewModel.isLoading.value == true) {
+                loading.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                loading.show()
+            } else if (viewModel.isLoading.value == false)
+                loading.cancel()
+        }
 
         return binding.root
     }
 
     private fun initRegisterButton() {
         binding.registerButton.setOnClickListener {
+            loading = (activity as MainActivity).initLoadingBarDialog()
             viewModel.onRegisterButtonClick(
                 binding.emailInputField.text.toString().trim(),
                 binding.passwordInputField.text.toString().trim()

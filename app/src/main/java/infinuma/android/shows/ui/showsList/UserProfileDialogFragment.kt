@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -28,6 +30,7 @@ import infinuma.android.shows.databinding.FragmentUserProfileDialogBinding
 import infinuma.android.shows.databinding.ProfilePhotoAlertDialogBinding
 import infinuma.android.shows.ui.sharedPreferences
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 class UserProfileDialogFragment : BottomSheetDialogFragment() {
@@ -35,6 +38,7 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentUserProfileDialogBinding? = null
     private lateinit var alertDialogBinding: ProfilePhotoAlertDialogBinding
     private val binding get() = _binding!!
+    private val viewModel: ShowsViewModel by viewModels()
     private val REQUEST_IMAGE_CAPTURE = 1
     private val REQUEST_PICK_IMAGE = 2
     private val REQUEST_CAMERA_PERMISSION = 101
@@ -46,11 +50,8 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
         binding.userEmail.text = sharedPreferences.getString(USERNAME, getString(R.string.placeholder_review_author))
 
         val tempPath = sharedPreferences.getString(PROFILE_PHOTO_URI, "")
-        if (tempPath == "")
-            binding.userProfilePicture.setImageResource(R.drawable.placeholder_profile_picture)
-        else
-            Glide.with(requireContext()).load(tempPath)
-                .into(binding.userProfilePicture)
+        Glide.with(requireContext()).load(tempPath).placeholder(R.drawable.placeholder_profile_picture)
+            .into(binding.userProfilePicture)
         binding.logoutButton.setOnClickListener {
             val builder =
                 AlertDialog.Builder(requireContext()).setMessage("Are you sure you want to logout?").setTitle("Logout?").setCancelable(true)
@@ -177,25 +178,37 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
                         putString(PROFILE_PHOTO_URI, photoUri.toString())
                         commit()
                     }
+                    Log.e("PHOTO URI", photoUri.toString())
+                    viewModel.uploadProfileImage(File(getPhotoPath(photoUri)))
+
                 }
 
                 REQUEST_PICK_IMAGE -> {
-                    val imageUri: Uri? = data?.data
-                    if (imageUri != null) {
-                        sharedPreferences.edit {
-                            putString(PROFILE_PHOTO_URI, imageUri.toString())
-                            commit()
-                        }
-                        Glide.with(requireContext()).load(imageUri)
-                            .into(binding.userProfilePicture)
-                    } else {
-                        Toast.makeText(requireContext(), "Failed to pick image", Toast.LENGTH_SHORT).show()
+                    val imageUri: Uri = data?.data ?: throw IOException("No image selected")
+                    sharedPreferences.edit {
+                        putString(PROFILE_PHOTO_URI, imageUri.toString())
+                        commit()
                     }
+                    Glide.with(requireContext()).load(imageUri)
+                        .into(binding.userProfilePicture)
+                    Log.e("PHOTO URI", imageUri.toString())
+                    viewModel.uploadProfileImage(File(getPhotoPath(imageUri)))
+
                 }
             }
         }
     }
 
+    fun getPhotoPath(photoUri : Uri): String {
+        val contentResolver = requireContext().contentResolver
+        val inputStream = contentResolver.openInputStream(photoUri) ?: throw IOException("File not found")
+        val tempFile = createTempFile("image", ".jpg")
+        val outputStream = FileOutputStream(tempFile.toString())
+        inputStream.copyTo(outputStream)
+        inputStream.close()
+        outputStream.close()
+        return tempFile.absolutePath
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

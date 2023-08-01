@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +17,8 @@ import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.data.Show
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
+import infinuma.android.shows.databinding.FragmentShowsBinding
+import infinuma.android.shows.ui.MainActivity
 
 class ShowDetailsFragment : Fragment() {
 
@@ -24,9 +27,10 @@ class ShowDetailsFragment : Fragment() {
     private lateinit var adapter: ReviewListAdapter
     private val viewModel: ShowDetailsViewModel by viewModels()
     private lateinit var writeReview: WriteReviewDialogFragment
-
+    private lateinit var loading : AlertDialog
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
+        loading = (activity as MainActivity).initLoadingBarDialog()
         adapter = ReviewListAdapter()
         binding.reviewRecycler.adapter = adapter
         viewModel.setShow((arguments?.get("show") as? Show)!!)
@@ -51,7 +55,13 @@ class ShowDetailsFragment : Fragment() {
                 }
             }
         }
-
+        viewModel.isLoading.observe(requireActivity()) {
+            if (viewModel.isLoading.value == true) {
+                loading.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                loading.show()
+            } else if (viewModel.isLoading.value == false)
+                loading.cancel()
+        }
         return binding.root
     }
 

@@ -2,6 +2,7 @@ package infinuma.android.shows.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.ActivityMainBinding
@@ -16,6 +17,10 @@ private lateinit var binding: ActivityMainBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ApiModule.initRetrofit(this)
+    }
+    fun initLoadingBarDialog(): AlertDialog {
+        return AlertDialog.Builder(this).setView(R.layout.loading_spinner_dialog).setCancelable(false)
+            .create()
     }
 
 }

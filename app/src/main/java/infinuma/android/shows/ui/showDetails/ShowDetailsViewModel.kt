@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import infinuma.android.shows.data.Show
+import infinuma.android.shows.models.AddReviewRequest
 import infinuma.android.shows.networking.ApiModule
 import infinuma.android.shows.ui.sharedPreferences
 import kotlinx.coroutines.launch
@@ -16,7 +17,8 @@ class ShowDetailsViewModel : ViewModel() {
     val showLiveData: LiveData<MutableList<ReviewListItem>> get() = _showLiveData
     private lateinit var show: Show
     var reviewListUpdated : MutableLiveData<Boolean> = MutableLiveData(false)
-
+    private val _isLoading : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isLoading : LiveData<Boolean> = _isLoading
     init {
         _showLiveData.value = mutableListOf()
     }
@@ -41,12 +43,12 @@ class ShowDetailsViewModel : ViewModel() {
     }
 
     fun loadReviews() {
+        _isLoading.value = true
         _showLiveData.value = mutableListOf()
         getInitialReviewList()
         viewModelScope.launch {
             try {
                 val response = getReviews(show.showId)
-                Log.e("GET REVIEWS", response.toString())
                 for (review in response.reviews) {
                     _showLiveData.value?.add(
                         ReviewListItem.Review(
@@ -58,11 +60,11 @@ class ShowDetailsViewModel : ViewModel() {
                         )
                     )
                 }
-                Log.e("GET RETVAL", _showLiveData.value.toString())
                 reviewListUpdated.value = !reviewListUpdated.value!!
             } catch (e: Exception) {
                 Log.e("GET REVIEWS", e.toString())
             }
+            _isLoading.value = false
         }
     }
 
@@ -72,5 +74,12 @@ class ShowDetailsViewModel : ViewModel() {
             sharedPreferences.getString("access-token", "").toString(),
             sharedPreferences.getString("client", "").toString(),
             sharedPreferences.getString("uid", "").toString()
+        )
+    suspend fun addReview(reviewBody: String, rating: Int, showId: Int) =
+        ApiModule.retrofit.addReview(
+            AddReviewRequest(reviewBody, rating, showId),
+            sharedPreferences.getString("access-token", "")!!,
+            sharedPreferences.getString("client", "")!!,
+            sharedPreferences.getString("uid", "")!!
         )
 }
