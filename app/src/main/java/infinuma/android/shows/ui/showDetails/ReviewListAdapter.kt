@@ -1,5 +1,7 @@
 package infinuma.android.shows.ui.showDetails
 
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,14 +9,18 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import infinuma.android.shows.R
 import infinuma.android.shows.databinding.ReviewListItemBinding
 import infinuma.android.shows.databinding.ShowDetailsItemBinding
 import infinuma.android.shows.databinding.ShowNoreviewsItemBinding
 import infinuma.android.shows.databinding.ShowRatingItemBinding
+import infinuma.android.shows.models.User
+import kotlinx.serialization.Serializable
 
 sealed class ReviewListItem {
-    data class Review(val reviewerName: String, val reviewText: String, val rating: Int, val profilePhotoURI: String) : ReviewListItem()
-    data class ShowDetails(val showImageResId: Int, val description: String) : ReviewListItem()
+    data class Review(val id: String, val comment: String, val rating: Int, val showId: Int, val user: User) : ReviewListItem()
+    data class ShowDetails(val showImageURI: String, val description: String) : ReviewListItem()
     data class Rating(val averageRating: Float, val numberOfReviews: Int) : ReviewListItem() {
         override fun toString(): String {
             return averageRating.toString()
@@ -45,20 +51,24 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
     }
 
     sealed class ShowDetailReviewViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
-        class ReviewViewHolder(private var binding: ReviewListItemBinding) : ShowDetailReviewViewHolder(binding.root) {
+        class ReviewViewHolder(private var binding: ReviewListItemBinding, private val context: Context) : ShowDetailReviewViewHolder(binding.root) {
             fun bind(review: ReviewListItem.Review) {
-                binding.reviewAuthor.text = review.reviewerName
+                binding.reviewAuthor.text = review.user.email.substringBefore("@")
                 binding.reviewRating.text = review.rating.toString()
-                binding.reviewBody.text = review.reviewText
-                //                THIS IS PREPARATION FOR CUSTOM REVIEW PROFILE PHOTOS
-                //                Glide.with(adapterContext).load(sharedPreferences.getString(PROFILEPHOTOURI,""))
-                //                    .into(binding.reviewAuthorProfilePicture)
+                binding.reviewBody.text = review.comment
+                Glide.with(context).load(review.user.imageUrl).placeholder(R.drawable.placeholder_profile_picture)
+                    .centerCrop()
+                    .circleCrop()
+                    .into(binding.reviewAuthorProfilePicture)
             }
         }
 
-        class ShowDetailsViewHolder(private var binding: ShowDetailsItemBinding) : ShowDetailReviewViewHolder(binding.root) {
+        class ShowDetailsViewHolder(private var binding: ShowDetailsItemBinding, private val context: Context) :
+            ShowDetailReviewViewHolder(binding.root) {
             fun bind(details: ReviewListItem.ShowDetails) {
-                binding.showImage.setImageResource(details.showImageResId)
+                Glide.with(context).load(details.showImageURI).placeholder(R.drawable.show_placeholder_icon).centerCrop()
+                    .into(binding.showImage)
+                Log.e("DETAILS IMAGE", details.showImageURI)
                 binding.showDescription.text = details.description
             }
         }
@@ -84,12 +94,12 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
         return when (viewType) {
             0 -> {
                 val binding = ShowDetailsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                ShowDetailReviewViewHolder.ShowDetailsViewHolder(binding)
+                ShowDetailReviewViewHolder.ShowDetailsViewHolder(binding, parent.context)
             }
 
             1 -> {
                 val binding = ReviewListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                ShowDetailReviewViewHolder.ReviewViewHolder(binding)
+                ShowDetailReviewViewHolder.ReviewViewHolder(binding,parent.context)
             }
 
             2 -> {
