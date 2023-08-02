@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import infinuma.android.shows.R
+import infinuma.android.shows.ShowsApplication
 import infinuma.android.shows.data.PROFILE_PHOTO_URI
 import infinuma.android.shows.data.SHOW
 import infinuma.android.shows.data.USER_PROFILE
@@ -23,7 +24,9 @@ import infinuma.android.shows.ui.sharedPreferences
 
 class ShowsFragment : Fragment() {
     private var _binding: FragmentShowsBinding? = null
-    private val viewModel: ShowsViewModel by activityViewModels()
+    private val viewModel: ShowsViewModel by viewModels {
+        ShowsViewModelFactory((activity?.application as ShowsApplication).database)
+    }
     private val binding get() = _binding!!
     private lateinit var adapter: ShowsListAdapter
     private lateinit var loading: AlertDialog
@@ -32,14 +35,20 @@ class ShowsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentShowsBinding.inflate(layoutInflater)
         loading = (activity as MainActivity).initLoadingBarDialog()
         binding.profileButton.isVisible = true
-        viewModel.fetchShows()
         initAdapter()
         viewModel.showsLiveData.observe(viewLifecycleOwner, Observer { shows ->
             adapter.submitList(shows)
         })
+        if((activity as MainActivity).isInternetConnected()) {
+            viewModel.fetchShows()
+        }
+        else {
+            viewModel.fetchShowsFromDatabase()
+        }
         binding.recyclerView.adapter = adapter
 
         binding.loadShowsButton.setOnClickListener {

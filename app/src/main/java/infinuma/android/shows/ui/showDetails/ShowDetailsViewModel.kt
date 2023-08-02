@@ -5,21 +5,28 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import infinuma.android.shows.data.PROFILE_PHOTO_URI
+import infinuma.android.shows.data.ReviewEntity
 import infinuma.android.shows.data.Show
+import infinuma.android.shows.data.ShowsDatabase
+import infinuma.android.shows.data.UserEntity
 import infinuma.android.shows.models.AddReviewRequest
+import infinuma.android.shows.models.User
 import infinuma.android.shows.networking.ApiModule
 import infinuma.android.shows.ui.sharedPreferences
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class ShowDetailsViewModel : ViewModel() {
+class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
 
     private var _showLiveData = MutableLiveData<MutableList<ReviewListItem>>()
     val showLiveData: LiveData<MutableList<ReviewListItem>> get() = _showLiveData
     private lateinit var show: Show
-    var reviewListUpdated : MutableLiveData<Boolean> = MutableLiveData(false)
-    private val _isLoading : MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val isLoading : LiveData<Boolean> = _isLoading
-    var averageRating : Float = 0f
+    var reviewListUpdated: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _isLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isLoading: LiveData<Boolean> = _isLoading
+
     init {
         _showLiveData.value = mutableListOf()
     }
@@ -50,7 +57,20 @@ class ShowDetailsViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = getReviews(show.showId)
-                var averageRating : Float = 0f
+                var averageRating: Float = 0f
+                database.showDAO().insertAllReviews(response.reviews.map { review ->
+                    ReviewEntity(
+                        review.id,
+                        review.comment,
+                        review.rating,
+                        review.showId,
+                        UserEntity(
+                            review.user.id.toInt(),
+                            review.user.email,
+                            review.user.imageUrl ?: ""
+                        )
+                    )
+                })
                 for (review in response.reviews) {
                     averageRating += review.rating
                     _showLiveData.value?.add(
@@ -64,7 +84,7 @@ class ShowDetailsViewModel : ViewModel() {
                     )
                 }
                 averageRating /= response.reviews.size
-                _showLiveData.value!![1]= ReviewListItem.Rating(averageRating, response.reviews.size)
+                _showLiveData.value!![1] = ReviewListItem.Rating(averageRating, response.reviews.size)
                 reviewListUpdated.value = !reviewListUpdated.value!!
             } catch (e: Exception) {
                 Log.e("GET REVIEWS", e.toString())
@@ -80,6 +100,45 @@ class ShowDetailsViewModel : ViewModel() {
             sharedPreferences.getString("client", "").toString(),
             sharedPreferences.getString("uid", "").toString()
         )
+
+    fun addReviewToDatabase(reviewBody: String, rating: Int, showId: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                database.showDAO().addReview(
+                    ReviewEntity(
+                        database.showDAO().getReviews(show.showId).size.toString(), reviewBody, rating, showId, UserEntity(
+                            sharedPreferences.getInt("uid", 0), sharedPreferences.getString("email", "")!!, sharedPreferences.getString(
+                                PROFILE_PHOTO_URI, ""
+                            )!!
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    fun loadReviewsFromDatabase(showId: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                var data: MutableList<ReviewListItem> = _showLiveData.value!!
+                data.addAll(database.showDAO().getReviews(showId).map { reviewEntity ->
+                    ReviewListItem.Review(
+                        reviewEntity.reviewId,
+                        reviewEntity.comment,
+                        reviewEntity.rating,
+                        reviewEntity.showId,
+                        User(
+                            reviewEntity.user.id.toString(),
+                            reviewEntity.user.email,
+                            reviewEntity.user.avatar
+                        )
+                    )
+                })
+                _showLiveData.postValue(data)
+            }
+        }
+    }
+
     suspend fun addReview(reviewBody: String, rating: Int, showId: Int) =
         ApiModule.retrofit.addReview(
             AddReviewRequest(reviewBody, rating, showId),

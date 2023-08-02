@@ -4,19 +4,26 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import infinuma.android.shows.data.PROFILE_PHOTO_URI
 import infinuma.android.shows.data.Show
+import infinuma.android.shows.data.ShowEntity
+import infinuma.android.shows.data.ShowsDatabase
 import infinuma.android.shows.networking.ApiModule
 import infinuma.android.shows.ui.sharedPreferences
 import java.io.File
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class ShowsViewModel() : ViewModel() {
+class ShowsViewModel(
+    private val database: ShowsDatabase
+) : ViewModel() {
 
     private var _showsLiveData = MutableLiveData<List<Show>>()
     val showsLiveData: LiveData<List<Show>> get() = _showsLiveData
@@ -33,8 +40,9 @@ class ShowsViewModel() : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = getShows(accessToken!!, client!!, uid!!)
+                database.showDAO().insertAllShows(response.shows.map { show->
+                    ShowEntity(show.showId,show.averageRating,show.description,show.image,show.numOfReviews,show.title) })
                 _showsLiveData.value = response.shows
-
             } catch (exception: Exception) {
                 Log.e("GET SHOWS", exception.toString())
             }
@@ -45,11 +53,22 @@ class ShowsViewModel() : ViewModel() {
     private suspend fun getShows(accessToken: String, client: String, uid: String) =
         ApiModule.retrofit.getShows(accessToken, client, uid)
 
+    fun fetchShowsFromDatabase() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+
+                val data=database.showDAO().getAllShows().map { showEntity->
+                    Show(showEntity.showId,showEntity.averageRating,showEntity.description,"",showEntity.numOfReviews,showEntity.title)
+                }
+                _showsLiveData.postValue(data)
+                Log.e("GET SHOWS FROM DB", data.toString())
+            }
+        }
+
+    }
     fun uploadProfileImage(photo: File) {
         viewModelScope.launch {
             try {
-//                Log.e("UPLOAD IMAGE", photoPath)
-//                Log.e("IMAGE FORMAT", photoPath.toRequestBody("image/*".toMediaTypeOrNull()).toString())
                 val response = uploadProfilePhoto(
                     MultipartBody.Part.createFormData(
                         "image", photo.name,

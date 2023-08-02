@@ -15,17 +15,21 @@ import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
+import infinuma.android.shows.ShowsApplication
 import infinuma.android.shows.data.Show
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
 import infinuma.android.shows.databinding.FragmentShowsBinding
 import infinuma.android.shows.ui.MainActivity
+import infinuma.android.shows.ui.showsList.ShowDetailsViewModelFactory
 
 class ShowDetailsFragment : Fragment() {
 
     private var _binding: FragmentShowDetailsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ReviewListAdapter
-    private val viewModel: ShowDetailsViewModel by viewModels()
+    private val viewModel: ShowDetailsViewModel by viewModels {
+        ShowDetailsViewModelFactory((activity?.application as ShowsApplication).database)
+    }
     private lateinit var writeReview: WriteReviewDialogFragment
     private lateinit var loading : AlertDialog
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -38,7 +42,11 @@ class ShowDetailsFragment : Fragment() {
         viewModel.showLiveData.observe(viewLifecycleOwner) {
             adapter.submitList(it.toList())
         }
-        viewModel.loadReviews()
+        if((activity as MainActivity).isInternetConnected()) {
+            viewModel.loadReviews()
+        }
+        else
+            viewModel.loadReviewsFromDatabase(viewModel.getShowId())
         viewModel.reviewListUpdated.observe(viewLifecycleOwner) {
             adapter.submitList(viewModel.showLiveData.value!!.toList())
         }
