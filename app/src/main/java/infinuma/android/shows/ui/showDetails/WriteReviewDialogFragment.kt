@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +20,7 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
 
     private var _binding: FragmentWriteReviewDialogBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: ShowDetailsViewModel by viewModels {
+    private val viewModel: ShowDetailsViewModel by activityViewModels {
         ShowDetailsViewModelFactory((activity?.application as ShowsApplication).database)
     }
     var reviewAdded : MutableLiveData<Boolean> = MutableLiveData(false)
@@ -50,9 +51,15 @@ class WriteReviewDialogFragment : BottomSheetDialogFragment() {
                 reviewAdded.value = true
             }
         }
-            else
-                viewModel.addReviewToDatabase(binding.reviewInputField.text.toString(),binding.reviewRatingInput.rating.toInt(),showId)
+            else {
+            try {
 
+                viewModel.addReviewToDatabase(binding.reviewInputField.text.toString(), binding.reviewRatingInput.rating.toInt(), showId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            reviewAdded.value = true
+        }
         }
         return binding.root
     }

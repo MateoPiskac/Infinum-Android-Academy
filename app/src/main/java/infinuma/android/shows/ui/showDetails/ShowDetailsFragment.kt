@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
@@ -27,7 +28,7 @@ class ShowDetailsFragment : Fragment() {
     private var _binding: FragmentShowDetailsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ReviewListAdapter
-    private val viewModel: ShowDetailsViewModel by viewModels {
+    private val viewModel: ShowDetailsViewModel by activityViewModels {
         ShowDetailsViewModelFactory((activity?.application as ShowsApplication).database)
     }
     private lateinit var writeReview: WriteReviewDialogFragment
@@ -42,11 +43,7 @@ class ShowDetailsFragment : Fragment() {
         viewModel.showLiveData.observe(viewLifecycleOwner) {
             adapter.submitList(it.toList())
         }
-        if((activity as MainActivity).isInternetConnected()) {
-            viewModel.loadReviews()
-        }
-        else
-            viewModel.loadReviewsFromDatabase(viewModel.getShowId())
+        loadReviews()
         viewModel.reviewListUpdated.observe(viewLifecycleOwner) {
             adapter.submitList(viewModel.showLiveData.value!!.toList())
         }
@@ -58,7 +55,7 @@ class ShowDetailsFragment : Fragment() {
             writeReview.reviewAdded.observe(viewLifecycleOwner) {
                 if(writeReview.reviewAdded.value == true){
                     writeReview.dismiss()
-                    viewModel.loadReviews()
+                    loadReviews()
                     writeReview.reviewAdded.value = false
                 }
             }
@@ -71,6 +68,13 @@ class ShowDetailsFragment : Fragment() {
                 loading.cancel()
         }
         return binding.root
+    }
+
+    private fun loadReviews() {
+        if ((activity as MainActivity).isInternetConnected()) {
+            viewModel.loadReviews()
+        } else
+            viewModel.loadReviewsFromDatabase(viewModel.getShowId())
     }
 
     private fun initToolbar() {

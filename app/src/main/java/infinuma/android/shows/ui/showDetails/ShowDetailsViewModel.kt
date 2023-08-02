@@ -65,7 +65,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
                         review.rating,
                         review.showId,
                         UserEntity(
-                            review.user.id.toInt(),
+                            review.user.id,
                             review.user.email,
                             review.user.imageUrl ?: ""
                         )
@@ -106,21 +106,24 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
             withContext(Dispatchers.IO) {
                 database.showDAO().addReview(
                     ReviewEntity(
-                        database.showDAO().getReviews(show.showId).size.toString(), reviewBody, rating, showId, UserEntity(
-                            sharedPreferences.getInt("uid", 0), sharedPreferences.getString("email", "")!!, sharedPreferences.getString(
+                        database.showDAO().getReviews(show.showId).size.toString(), reviewBody, rating, showId, UserEntity(//i am passing the email as id because i do not know how to determine the user id per se
+                            sharedPreferences.getString("uid", "0")!!, sharedPreferences.getString("uid", "")!!, sharedPreferences.getString(
                                 PROFILE_PHOTO_URI, ""
                             )!!
                         )
                     )
                 )
             }
+            reviewListUpdated.value = !reviewListUpdated.value!!
         }
     }
 
     fun loadReviewsFromDatabase(showId: Int) {
         viewModelScope.launch {
+            _showLiveData.value = mutableListOf()
             withContext(Dispatchers.IO) {
-                var data: MutableList<ReviewListItem> = _showLiveData.value!!
+
+                var data: MutableList<ReviewListItem> = getInitialReviewList()
                 data.addAll(database.showDAO().getReviews(showId).map { reviewEntity ->
                     ReviewListItem.Review(
                         reviewEntity.reviewId,
@@ -128,7 +131,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
                         reviewEntity.rating,
                         reviewEntity.showId,
                         User(
-                            reviewEntity.user.id.toString(),
+                            reviewEntity.user.id,
                             reviewEntity.user.email,
                             reviewEntity.user.avatar
                         )
