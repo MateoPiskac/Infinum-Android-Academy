@@ -9,13 +9,13 @@ import androidx.room.Query
 interface ReviewsDAO {
 
     @Query("SELECT * FROM reviews WHERE show_id = :showId")
-    fun getReviews(showId: Int) : List<ReviewEntity>
+    fun getReviews(showId: Int): List<ReviewEntity>
 
     @Insert(entity = ReviewEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun addReview(reviews: ReviewEntity)
 
     @Query("SELECT * FROM reviews WHERE reviewId = :reviewId")
-    fun getReview(reviewId : String) : ReviewEntity
+    fun getReview(reviewId: String): ReviewEntity
 
     @Insert(entity = ReviewEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllReviews(reviews: List<ReviewEntity>)

@@ -36,7 +36,7 @@ class ShowsViewModel(
         uid = sharedPreferences.getString("uid", "").toString()
         viewModelScope.launch {
             try {
-                val response = getShows(accessToken!!, client!!, uid!!)
+                val response = getShows(accessToken, client, uid)
                 database.showDAO().insertAllShows(response.shows.map { show ->
                     ShowEntity(show.showId, show.averageRating, show.description, show.image, show.numOfReviews, show.title)
                 })

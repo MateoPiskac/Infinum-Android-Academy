@@ -1,8 +1,6 @@
 package infinuma.android.shows.ui.showsList
 
 import android.content.Context
-import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +12,8 @@ import infinuma.android.shows.databinding.ShowsListItemBinding
 class ShowsListAdapter(private var shows: List<Show>, private val onItemClickCallback: (Show) -> Unit) :
     RecyclerView.Adapter<ShowsListAdapter.ShowsViewHolder>() {
 
-    inner class ShowsViewHolder(private val binding: ShowsListItemBinding,private val context: Context) : RecyclerView.ViewHolder(binding.root) {
+    inner class ShowsViewHolder(private val binding: ShowsListItemBinding, private val context: Context) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(show: Show) {
             binding.cardView.setOnClickListener {
                 onItemClickCallback.invoke(show)

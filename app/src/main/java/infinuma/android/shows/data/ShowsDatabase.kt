@@ -9,7 +9,6 @@ import androidx.room.RoomDatabase
     entities = [ShowEntity::class, ReviewEntity::class, UserEntity::class],
     version = 1
 )
-//@TypeConverters(UserEntityConverter::class)
 abstract class ShowsDatabase : RoomDatabase() {
 
     companion object {

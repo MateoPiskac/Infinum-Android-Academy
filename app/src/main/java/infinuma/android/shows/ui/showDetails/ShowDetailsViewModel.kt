@@ -83,8 +83,9 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
                         UserEntity(
                             review.user.id.toInt(),
                             review.user.email,
-                            review.user.imageUrl?:""
-                        ))
+                            review.user.imageUrl ?: ""
+                        )
+                    )
                 }
                 averageRating /= response.reviews.size
                 _showLiveData.value!![1] = ReviewListItem.Rating(averageRating, response.reviews.size)
@@ -107,12 +108,15 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
     fun addReviewToDatabase(reviewBody: String, rating: Int, showId: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                database.usersDAO().insertUser(UserEntity( //i am passing the email as id because i do not know how to determine the user id per se
-                    0,
-                    sharedPreferences.getString("uid", "")!!,
-                    sharedPreferences.getString(
-                        PROFILE_PHOTO_URI, ""
-                    )!!))
+                database.usersDAO().insertUser(
+                    UserEntity( //i am passing the email as id because i do not know how to determine the user id per se
+                        0,
+                        sharedPreferences.getString("uid", "")!!,
+                        sharedPreferences.getString(
+                            PROFILE_PHOTO_URI, ""
+                        )!!
+                    )
+                )
                 database.reviewDAO().addReview(
                     ReviewEntity(
                         0,
@@ -120,8 +124,8 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
                         rating,
                         showId,
                         database.usersDAO().getUserByEmail(sharedPreferences.getString("uid", "")!!).id
-                        )
                     )
+                )
 
             }
             reviewListUpdated.value = !reviewListUpdated.value!!
@@ -137,7 +141,7 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
                 val user = database.usersDAO().getUserByEmail(sharedPreferences.getString("uid", "")!!)
                 data.addAll(database.reviewDAO().getReviews(showId).map { reviewEntity ->
                     ReviewListItem.Review(
-                        reviewEntity.reviewId.toString() ?: "0",
+                        reviewEntity.reviewId.toString(),
                         reviewEntity.comment,
                         reviewEntity.rating,
                         reviewEntity.showId,

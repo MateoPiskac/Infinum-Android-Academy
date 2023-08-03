@@ -15,8 +15,8 @@ interface UsersDAO {
     suspend fun insertUser(user: UserEntity)
 
     @Query("SELECT * FROM users WHERE id = :id")
-    suspend fun getUser(id: Int) : UserEntity
+    suspend fun getUser(id: Int): UserEntity
 
     @Query("SELECT * FROM users WHERE email = :email")
-    suspend fun getUserByEmail(email: String) : UserEntity
+    suspend fun getUserByEmail(email: String): UserEntity
 }

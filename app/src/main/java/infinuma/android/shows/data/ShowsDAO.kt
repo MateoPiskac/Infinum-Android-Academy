@@ -9,10 +9,10 @@ import androidx.room.Query
 interface ShowsDAO {
 
     @Query("SELECT * FROM shows")
-    suspend fun getAllShows() : List<ShowEntity>
+    suspend fun getAllShows(): List<ShowEntity>
 
     @Query("SELECT * FROM shows WHERE showId = :id")
-    suspend fun getShow(id: Int) : ShowEntity
+    suspend fun getShow(id: Int): ShowEntity
 
     @Insert(entity = ShowEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllShows(shows: List<ShowEntity>)

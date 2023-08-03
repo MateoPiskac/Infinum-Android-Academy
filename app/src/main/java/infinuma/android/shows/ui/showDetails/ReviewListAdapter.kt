@@ -16,7 +16,6 @@ import infinuma.android.shows.databinding.ShowDetailsItemBinding
 import infinuma.android.shows.databinding.ShowNoreviewsItemBinding
 import infinuma.android.shows.databinding.ShowRatingItemBinding
 import infinuma.android.shows.models.User
-import kotlinx.serialization.Serializable
 
 sealed class ReviewListItem {
     data class Review(val id: String, val comment: String, val rating: Int, val showId: Int, val user: User) : ReviewListItem()
@@ -51,7 +50,8 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
     }
 
     sealed class ShowDetailReviewViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView) {
-        class ReviewViewHolder(private var binding: ReviewListItemBinding, private val context: Context) : ShowDetailReviewViewHolder(binding.root) {
+        class ReviewViewHolder(private var binding: ReviewListItemBinding, private val context: Context) :
+            ShowDetailReviewViewHolder(binding.root) {
             fun bind(review: ReviewListItem.Review) {
                 binding.reviewAuthor.text = review.user.email.substringBefore("@")
                 binding.reviewRating.text = review.rating.toString()
@@ -99,7 +99,7 @@ class ReviewListAdapter : ListAdapter<ReviewListItem, ReviewListAdapter.ShowDeta
 
             1 -> {
                 val binding = ReviewListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                ShowDetailReviewViewHolder.ReviewViewHolder(binding,parent.context)
+                ShowDetailReviewViewHolder.ReviewViewHolder(binding, parent.context)
             }
 
             2 -> {

@@ -8,7 +8,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -43,10 +42,9 @@ class ShowsFragment : Fragment() {
         viewModel.showsLiveData.observe(viewLifecycleOwner, Observer { shows ->
             adapter.submitList(shows)
         })
-        if((activity as MainActivity).isInternetConnected()) {
+        if ((activity as MainActivity).isInternetConnected()) {
             viewModel.fetchShows()
-        }
-        else {
+        } else {
             viewModel.fetchShowsFromDatabase()
         }
         binding.recyclerView.adapter = adapter

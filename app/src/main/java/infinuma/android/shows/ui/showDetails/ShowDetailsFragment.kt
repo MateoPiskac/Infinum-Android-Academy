@@ -12,14 +12,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import infinuma.android.shows.R
 import infinuma.android.shows.ShowsApplication
 import infinuma.android.shows.data.Show
 import infinuma.android.shows.databinding.FragmentShowDetailsBinding
-import infinuma.android.shows.databinding.FragmentShowsBinding
 import infinuma.android.shows.ui.MainActivity
 import infinuma.android.shows.ui.showsList.ShowDetailsViewModelFactory
 
@@ -32,7 +30,7 @@ class ShowDetailsFragment : Fragment() {
         ShowDetailsViewModelFactory((activity?.application as ShowsApplication).database)
     }
     private lateinit var writeReview: WriteReviewDialogFragment
-    private lateinit var loading : AlertDialog
+    private lateinit var loading: AlertDialog
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentShowDetailsBinding.inflate(layoutInflater)
         loading = (activity as MainActivity).initLoadingBarDialog()
@@ -50,10 +48,10 @@ class ShowDetailsFragment : Fragment() {
         binding.reviewButton.setOnClickListener {
             viewModel.onReviewButtonClick()
             writeReview = WriteReviewDialogFragment()
-            writeReview.getShowDetails(viewModel.showLiveData.value?.get(1).toString().toFloat(),viewModel.getShowId())
+            writeReview.getShowDetails(viewModel.showLiveData.value?.get(1).toString().toFloat(), viewModel.getShowId())
             writeReview.show(childFragmentManager, "WriteReview")
             writeReview.reviewAdded.observe(viewLifecycleOwner) {
-                if(writeReview.reviewAdded.value == true){
+                if (writeReview.reviewAdded.value == true) {
                     writeReview.dismiss()
                     loadReviews()
                     writeReview.reviewAdded.value = false
