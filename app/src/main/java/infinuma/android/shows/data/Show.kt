@@ -5,10 +5,10 @@ import kotlinx.serialization.SerialName
 
 @kotlinx.serialization.Serializable
 data class Show(
-    @SerialName("id")val showId: Int,
-    @SerialName("average_rating")val averageRating: Float?,
-    @SerialName("description")val description: String,
+    @SerialName("id") val showId: Int,
+    @SerialName("average_rating") val averageRating: Float?,
+    @SerialName("description") val description: String,
     @SerialName("image_url") val image: String,
-    @SerialName("no_of_reviews")val numOfReviews: Int,
-    @SerialName("title")val title: String,
+    @SerialName("no_of_reviews") val numOfReviews: Int,
+    @SerialName("title") val title: String
 ) : Serializable

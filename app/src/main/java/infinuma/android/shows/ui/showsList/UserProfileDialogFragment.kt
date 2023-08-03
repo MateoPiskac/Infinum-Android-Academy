@@ -199,7 +199,7 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun getPhotoPath(photoUri : Uri): String {
+    fun getPhotoPath(photoUri: Uri): String {
         val contentResolver = requireContext().contentResolver
         val inputStream = contentResolver.openInputStream(photoUri) ?: throw IOException("File not found")
         val tempFile = createTempFile("image", ".jpg")
@@ -209,6 +209,7 @@ class UserProfileDialogFragment : BottomSheetDialogFragment() {
         outputStream.close()
         return tempFile.absolutePath
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

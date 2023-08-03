@@ -24,7 +24,7 @@ class RegisterFragment : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
     private val viewModel: RegisterViewModel by viewModels()
-    private lateinit var loading : AlertDialog
+    private lateinit var loading: AlertDialog
 
     private val watcher = object : TextWatcher {
         override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
