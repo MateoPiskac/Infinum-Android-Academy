@@ -63,12 +63,12 @@ class ShowsFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        val listOfShows = viewModel.showsLiveData.value
         if ((activity as MainActivity).isInternetConnected()) {
             viewModel.fetchShows()
         } else {
             viewModel.fetchShowsFromDatabase()
         }
+        val listOfShows = viewModel.showsLiveData.value
         adapter = ShowsListAdapter(listOfShows ?: emptyList()) {
             val bundle = bundleOf(SHOW to it)
             findNavController().navigate(R.id.action_showsFragment_to_showDetailsFragment, bundle)
