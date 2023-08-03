@@ -40,14 +40,31 @@ class ShowsFragment : Fragment() {
         binding.profileButton.isVisible = true
         initAdapter()
         viewModel.showsLiveData.observe(viewLifecycleOwner, Observer { shows ->
+            if(viewModel.showsLiveData.value.isNullOrEmpty()) {
+                binding.emptyListIcon.isVisible = true
+                binding.emptyListText.isVisible = true
+                binding.loadShowsButton.isVisible = true
+                binding.recyclerView.isVisible = false
+            } else {
+                displayShowsList()
+            }
             adapter.submitList(shows)
         })
-
-        binding.recyclerView.adapter = adapter
-
-        binding.loadShowsButton.setOnClickListener {
-            displayShowsList()
+        if ((activity as MainActivity).isInternetConnected()) {
+            viewModel.fetchShows()
+        } else {
+            viewModel.fetchShowsFromDatabase()
         }
+        binding.recyclerView.adapter = adapter
+        displayShowsList()
+        binding.loadShowsButton.setOnClickListener {
+            if ((activity as MainActivity).isInternetConnected()) {
+                viewModel.fetchShows()
+            } else {
+                viewModel.fetchShowsFromDatabase()
+            }
+        }
+
         viewModel.isLoading.observe(requireActivity()) {
             if (viewModel.isLoading.value == true) {
                 loading.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -62,17 +79,26 @@ class ShowsFragment : Fragment() {
         return binding.root
     }
 
-    private fun initAdapter() {
-        if ((activity as MainActivity).isInternetConnected()) {
-            viewModel.fetchShows()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if(viewModel.showsLiveData.value.isNullOrEmpty()) {
+            binding.emptyListIcon.isVisible = true
+            binding.emptyListText.isVisible = true
+            binding.loadShowsButton.isVisible = true
+            binding.recyclerView.isVisible = false
         } else {
-            viewModel.fetchShowsFromDatabase()
+            displayShowsList()
         }
-        val listOfShows = viewModel.showsLiveData.value
-        adapter = ShowsListAdapter(listOfShows ?: emptyList()) {
+
+    }
+
+
+    private fun initAdapter() {
+        adapter = ShowsListAdapter( emptyList()) {
             val bundle = bundleOf(SHOW to it)
             findNavController().navigate(R.id.action_showsFragment_to_showDetailsFragment, bundle)
         }
+        displayShowsList()
     }
 
     private fun displayShowsList() {

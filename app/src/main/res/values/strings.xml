@@ -2,8 +2,8 @@
     <string name="app_name">Shows</string>
     <string name="login_text">In order to continue please log in.</string>
     <string name="login">Login</string>
-    <string name="email_hint">Email</string>
-    <string name="password_hint">Password</string>
+    <string name="email_hint">  Email</string>
+    <string name="password_hint">  Password</string>
     <string name="visual_design_element_description">Visual design element</string>
     <string name="welcome_message">Welcome %s</string>
     <string name="title_activity_shows">ShowsActivity</string>
@@ -38,4 +38,5 @@
     <string name="register">Register</string>
     <string name="confirm_password_hint">Confirm Password</string>
     <string name="registration_succesful">Registration succesful!</string>
+    <string name="app_icon">App icon</string>
 </resources>

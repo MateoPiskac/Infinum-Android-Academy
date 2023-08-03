@@ -4,10 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import infinuma.android.shows.R
 import infinuma.android.shows.databinding.ActivityMainBinding
 import infinuma.android.shows.networking.ApiModule
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
 private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         sharedPreferences = getSharedPreferences("Shows", MODE_PRIVATE)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

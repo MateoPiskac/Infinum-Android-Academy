@@ -72,7 +72,7 @@
         android:backgroundTint="@color/purple"
         app:cornerRadius="24dp"
         android:text="@string/logout"
-        android:textAppearance="@style/login_text"
+        android:textAppearance="@style/input_text"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

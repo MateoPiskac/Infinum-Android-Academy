@@ -8,6 +8,9 @@ import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.view.animation.BounceInterpolator
+import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -101,7 +104,8 @@ class LoginFragment : Fragment() {
             } else if (viewModel.isLoading.value == false)
                 loading.cancel()
         }
-
+        animateAppIcon()
+        animateAppTitle()
         return binding.root
     }
 
@@ -115,10 +119,26 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (sharedPreferences.getBoolean(REMEMBER_LOGIN, false))
             findNavController().navigate(R.id.action_loginFragment_to_showsFragment)
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun animateAppIcon() {
+        binding.appIcon.translationY = -100f
+        binding.appIcon.animate()
+            .translationY(0f)
+            .setDuration(1500)
+            .setInterpolator(BounceInterpolator())
+            .start()
+    }
+
+    private fun animateAppTitle() {
+        binding.appTitle.scaleX = 0f
+        binding.appTitle.scaleY = 0f
+        binding.appTitle.animate().scaleX(1f).scaleY(1f).setDuration(1500).setInterpolator(OvershootInterpolator()).start()
     }
 }
