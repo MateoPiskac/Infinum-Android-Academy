@@ -42,11 +42,7 @@ class ShowsFragment : Fragment() {
         viewModel.showsLiveData.observe(viewLifecycleOwner, Observer { shows ->
             adapter.submitList(shows)
         })
-        if ((activity as MainActivity).isInternetConnected()) {
-            viewModel.fetchShows()
-        } else {
-            viewModel.fetchShowsFromDatabase()
-        }
+
         binding.recyclerView.adapter = adapter
 
         binding.loadShowsButton.setOnClickListener {
@@ -67,7 +63,13 @@ class ShowsFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        adapter = ShowsListAdapter(emptyList()) {
+        val listOfShows = viewModel.showsLiveData.value
+        if ((activity as MainActivity).isInternetConnected()) {
+            viewModel.fetchShows()
+        } else {
+            viewModel.fetchShowsFromDatabase()
+        }
+        adapter = ShowsListAdapter(listOfShows ?: emptyList()) {
             val bundle = bundleOf(SHOW to it)
             findNavController().navigate(R.id.action_showsFragment_to_showDetailsFragment, bundle)
         }
