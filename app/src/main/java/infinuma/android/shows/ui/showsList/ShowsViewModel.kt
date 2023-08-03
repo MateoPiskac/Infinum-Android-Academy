@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import infinuma.android.shows.data.PROFILE_PHOTO_URI
 import infinuma.android.shows.data.Show
@@ -16,10 +15,8 @@ import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 class ShowsViewModel(
     private val database: ShowsDatabase
@@ -40,8 +37,9 @@ class ShowsViewModel(
         viewModelScope.launch {
             try {
                 val response = getShows(accessToken!!, client!!, uid!!)
-                database.showDAO().insertAllShows(response.shows.map { show->
-                    ShowEntity(show.showId,show.averageRating,show.description,show.image,show.numOfReviews,show.title) })
+                database.showDAO().insertAllShows(response.shows.map { show ->
+                    ShowEntity(show.showId, show.averageRating, show.description, show.image, show.numOfReviews, show.title)
+                })
                 _showsLiveData.value = response.shows
             } catch (exception: Exception) {
                 Log.e("GET SHOWS", exception.toString())
@@ -55,10 +53,16 @@ class ShowsViewModel(
 
     fun fetchShowsFromDatabase() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO){
+            withContext(Dispatchers.IO) {
 
-                val data=database.showDAO().getAllShows().map { showEntity->
-                    Show(showEntity.showId,showEntity.averageRating,showEntity.description,"",showEntity.numOfReviews,showEntity.title)
+                val data = database.showDAO().getAllShows().map { showEntity ->
+                    Show(
+                        showId = showEntity.showId,
+                        averageRating = showEntity.averageRating,
+                        description = showEntity.description, "",
+                        numOfReviews = showEntity.numOfReviews,
+                        title = showEntity.title
+                    )
                 }
                 _showsLiveData.postValue(data)
                 Log.e("GET SHOWS FROM DB", data.toString())
@@ -66,6 +70,7 @@ class ShowsViewModel(
         }
 
     }
+
     fun uploadProfileImage(photo: File) {
         viewModelScope.launch {
             try {

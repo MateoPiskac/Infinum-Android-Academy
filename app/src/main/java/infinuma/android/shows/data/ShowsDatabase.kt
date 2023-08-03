@@ -4,13 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 
 @Database(
-    entities = [ShowEntity::class, ReviewEntity::class],
-    version = 3
+    entities = [ShowEntity::class, ReviewEntity::class, UserEntity::class],
+    version = 1
 )
-@TypeConverters(UserEntityConverter::class)
+//@TypeConverters(UserEntityConverter::class)
 abstract class ShowsDatabase : RoomDatabase() {
 
     companion object {
@@ -33,5 +32,8 @@ abstract class ShowsDatabase : RoomDatabase() {
         }
 
     }
+
     abstract fun showDAO(): ShowsDAO
+    abstract fun reviewDAO(): ReviewsDAO
+    abstract fun usersDAO(): UsersDAO
 }

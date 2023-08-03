@@ -29,7 +29,7 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val viewModel: LoginViewModel by viewModels()
-    private lateinit var loading : AlertDialog
+    private lateinit var loading: AlertDialog
     private val watcher = object : TextWatcher {
         override fun beforeTextChanged(text: CharSequence?, start: Int, count: Int, after: Int) {
             binding.emailInputField.error = null
@@ -98,7 +98,7 @@ class LoginFragment : Fragment() {
             if (viewModel.isLoading.value == true) {
                 loading.window?.setBackgroundDrawableResource(android.R.color.transparent)
                 loading.show()
-            } else if(viewModel.isLoading.value == false)
+            } else if (viewModel.isLoading.value == false)
                 loading.cancel()
         }
 

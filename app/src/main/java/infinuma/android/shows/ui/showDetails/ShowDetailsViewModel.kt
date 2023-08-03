@@ -58,19 +58,16 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
             try {
                 val response = getReviews(show.showId)
                 var averageRating: Float = 0f
-                database.showDAO().insertAllReviews(response.reviews.map { review ->
+                database.reviewDAO().insertAllReviews(response.reviews.map { review ->
                     ReviewEntity(
-                        review.id,
-                        review.comment,
-                        review.rating,
-                        review.showId,
-                        UserEntity(
-                            review.user.id,
-                            review.user.email,
-                            review.user.imageUrl ?: ""
-                        )
+                        reviewId = review.id.toInt(),
+                        comment = review.comment,
+                        rating = review.rating,
+                        showId = review.showId,
+                        userId = review.user.id.toInt()
                     )
-                })
+                }
+                )
                 for (review in response.reviews) {
                     averageRating += review.rating
                     _showLiveData.value?.add(
@@ -82,6 +79,12 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
                             review.user
                         )
                     )
+                    database.usersDAO().insertUser(
+                        UserEntity(
+                            review.user.id.toInt(),
+                            review.user.email,
+                            review.user.imageUrl?:""
+                        ))
                 }
                 averageRating /= response.reviews.size
                 _showLiveData.value!![1] = ReviewListItem.Rating(averageRating, response.reviews.size)
@@ -104,15 +107,22 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
     fun addReviewToDatabase(reviewBody: String, rating: Int, showId: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                database.showDAO().addReview(
+                database.usersDAO().insertUser(UserEntity( //i am passing the email as id because i do not know how to determine the user id per se
+                    0,
+                    sharedPreferences.getString("uid", "")!!,
+                    sharedPreferences.getString(
+                        PROFILE_PHOTO_URI, ""
+                    )!!))
+                database.reviewDAO().addReview(
                     ReviewEntity(
-                        database.showDAO().getReviews(show.showId).size.toString(), reviewBody, rating, showId, UserEntity(//i am passing the email as id because i do not know how to determine the user id per se
-                            sharedPreferences.getString("uid", "0")!!, sharedPreferences.getString("uid", "")!!, sharedPreferences.getString(
-                                PROFILE_PHOTO_URI, ""
-                            )!!
+                        0,
+                        reviewBody,
+                        rating,
+                        showId,
+                        database.usersDAO().getUserByEmail(sharedPreferences.getString("uid", "")!!).id
                         )
                     )
-                )
+
             }
             reviewListUpdated.value = !reviewListUpdated.value!!
         }
@@ -124,16 +134,17 @@ class ShowDetailsViewModel(private val database: ShowsDatabase) : ViewModel() {
             withContext(Dispatchers.IO) {
 
                 var data: MutableList<ReviewListItem> = getInitialReviewList()
-                data.addAll(database.showDAO().getReviews(showId).map { reviewEntity ->
+                val user = database.usersDAO().getUserByEmail(sharedPreferences.getString("uid", "")!!)
+                data.addAll(database.reviewDAO().getReviews(showId).map { reviewEntity ->
                     ReviewListItem.Review(
-                        reviewEntity.reviewId,
+                        reviewEntity.reviewId.toString() ?: "0",
                         reviewEntity.comment,
                         reviewEntity.rating,
                         reviewEntity.showId,
                         User(
-                            reviewEntity.user.id,
-                            reviewEntity.user.email,
-                            reviewEntity.user.avatar
+                            user.id.toString(),
+                            user.email,
+                            user.avatar
                         )
                     )
                 })
