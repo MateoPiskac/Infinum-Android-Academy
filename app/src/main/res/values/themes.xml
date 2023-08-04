@@ -80,7 +80,7 @@
     </style>
 
     <style name="CustomTextInputLayoutReview" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="android:textColorHint">@color/black</item>
+        <item name="android:textColorHint">@color/white</item>
     </style>
 
     <style name="roundedImageViewRounded">

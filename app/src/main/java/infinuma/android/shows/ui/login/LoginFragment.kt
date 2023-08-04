@@ -49,7 +49,9 @@ class LoginFragment : Fragment() {
 
             } else {
                 if (binding.emailInputField.text?.matches(EMAIL_REGEX) == false)
-                    binding.emailInputField.error = "Invalid Email"
+                    binding.emailInput.error = "Invalid Email"
+                else
+                    binding.emailInput.isErrorEnabled = false
                 binding.loginButton.isEnabled = false
                 binding.loginButton.setTextColor(ContextCompat.getColor(context!!, R.color.white))
             }
