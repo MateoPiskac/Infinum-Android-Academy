@@ -9,9 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import infinuma.android.shows.R
 import infinuma.android.shows.ShowsApplication
 import infinuma.android.shows.data.PROFILE_PHOTO_URI
@@ -37,17 +35,33 @@ class ShowsFragment : Fragment() {
 
         _binding = FragmentShowsBinding.inflate(layoutInflater)
         loading = (activity as MainActivity).initLoadingBarDialog()
-        binding.profileButton.isVisible = true
         initAdapter()
-        viewModel.showsLiveData.observe(viewLifecycleOwner, Observer { shows ->
+        viewModel.showsLiveData.observe(viewLifecycleOwner) { shows ->
+            if (viewModel.showsLiveData.value.isNullOrEmpty()) {
+                binding.emptyListIcon.isVisible = true
+                binding.emptyListText.isVisible = true
+                binding.loadShowsButton.isVisible = true
+                binding.recyclerView.isVisible = false
+            } else {
+                displayShowsList()
+            }
             adapter.submitList(shows)
-        })
-
-        binding.recyclerView.adapter = adapter
-
-        binding.loadShowsButton.setOnClickListener {
-            displayShowsList()
         }
+        if ((activity as MainActivity).isInternetConnected()) {
+            viewModel.fetchShows()
+        } else {
+            viewModel.fetchShowsFromDatabase()
+        }
+        binding.recyclerView.adapter = adapter
+        displayShowsList()
+        binding.loadShowsButton.setOnClickListener {
+            if ((activity as MainActivity).isInternetConnected()) {
+                viewModel.fetchShows()
+            } else {
+                viewModel.fetchShowsFromDatabase()
+            }
+        }
+
         viewModel.isLoading.observe(requireActivity()) {
             if (viewModel.isLoading.value == true) {
                 loading.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -55,24 +69,33 @@ class ShowsFragment : Fragment() {
             } else if (viewModel.isLoading.value == false)
                 loading.cancel()
         }
-        binding.profileButton.setOnClickListener {
+
+        binding.toolbar.setProfileButtonClickListener {
             val userProfile = UserProfileDialogFragment()
             userProfile.show(childFragmentManager, USER_PROFILE)
         }
         return binding.root
     }
 
-    private fun initAdapter() {
-        if ((activity as MainActivity).isInternetConnected()) {
-            viewModel.fetchShows()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (viewModel.showsLiveData.value.isNullOrEmpty()) {
+            binding.emptyListIcon.isVisible = true
+            binding.emptyListText.isVisible = true
+            binding.loadShowsButton.isVisible = true
+            binding.recyclerView.isVisible = false
         } else {
-            viewModel.fetchShowsFromDatabase()
+            displayShowsList()
         }
-        val listOfShows = viewModel.showsLiveData.value
-        adapter = ShowsListAdapter(listOfShows ?: emptyList()) {
+
+    }
+
+    private fun initAdapter() {
+        adapter = ShowsListAdapter(emptyList()) {
             val bundle = bundleOf(SHOW to it)
             findNavController().navigate(R.id.action_showsFragment_to_showDetailsFragment, bundle)
         }
+        displayShowsList()
     }
 
     private fun displayShowsList() {
@@ -85,9 +108,8 @@ class ShowsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val tempPath = sharedPreferences.getString(PROFILE_PHOTO_URI, "")
-        Glide.with(requireContext()).load(tempPath).placeholder(R.drawable.placeholder_profile_picture)
-            .into(binding.profileButton)
+        //        val tempPath = sharedPreferences.getString(PROFILE_PHOTO_URI, "")
+        binding.toolbar.setProfilePhoto(sharedPreferences.getString(PROFILE_PHOTO_URI, ""))
     }
 
     override fun onDestroy() {
